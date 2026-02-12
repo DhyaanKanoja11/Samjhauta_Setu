@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamjhautaSetu | समझौते का सेतु</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            green: '#2C5F2D',
+                            cream: '#F5F1E7',
+                            brown: '#8B4513',
+                            blue: '#05668D',
+                            tan: '#D4A373',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                        hindi: ['Noto Sans Devanagari', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px border rgba(255, 255, 255, 0.2);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+            background-color: #F5F1E7;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen text-neutral-900 overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 glass border-b border-brand-green/10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-brand-green rounded-xl flex items-center justify-center shadow-lg">
+                    <i data-lucide="scale" class="text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black text-brand-green font-display">समझौतासेतु</h1>
+                    <p class="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Samjhauta Setu</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button
+                    class="hidden md:flex items-center gap-2 px-4 py-2 bg-brand-green/5 text-brand-green rounded-xl font-bold text-sm">
+                    <i data-lucide="languages" class="w-4 h-4"></i>
+                    हिन्दी
+                </button>
+                <div
+                    class="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 text-green-600 rounded-full text-[10px] font-black uppercase tracking-tighter">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Live Integrated
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12 space-y-16">
+
+        <!-- Hero -->
+        <section class="relative bg-brand-green rounded-[3rem] p-12 text-white shadow-2xl overflow-hidden">
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-xs font-bold uppercase tracking-widest">
+                        किसान-डिजिटल क्रांति
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-black font-display leading-[1.1]">
+                        नमस्ते, किसान भाई 🙏
+                    </h1>
+                    <p class="text-brand-cream/80 text-xl font-medium max-w-lg">
+                        आपका अपना डिजिटल कृषि कानून सहायक। विवाद सुलझायें, दस्तावेज जांचें और मंडी भाव पायें - सब एक
+                        जगह।
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="scrollToSection('chatbot')"
+                            class="px-8 py-4 bg-white text-brand-green rounded-2xl font-black text-lg shadow-xl hover:bg-brand-tan hover:text-white transition-all flex items-center gap-3">
+                            <i data-lucide="message-square"></i> कृषि सहायक से पूछें
+                        </button>
+                        <button onclick="window.open('http://localhost:5173', '_blank')"
+                            class="px-8 py-4 bg-brand-tan text-white rounded-2xl font-black text-lg shadow-xl hover:scale-105 transition-all flex items-center gap-3">
+                            <i data-lucide="layout"></i> पूर्ण डैशबोर्ड खोलें
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden lg:block relative">
+                    <div
+                        class="w-full aspect-square bg-white/5 rounded-full flex items-center justify-center animate-float">
+                        <i data-lucide="sprout" class="w-48 h-48 text-brand-tan opacity-40"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div
+                class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-neutral-100 hover:scale-105 transition-all">
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-sm font-black text-neutral-400 uppercase tracking-widest">मंडी भाव</p>
+                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="trending-up"></i>
+                    </div>
+                </div>
+                <h3 class="text-4xl font-black text-brand-green">₹2,850</h3>
+                <p class="text-xs font-bold text-green-600 mt-2">+2.5% पिछले हफ्ते से</p>
+            </div>
+            <div
+                class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-neutral-100 hover:scale-105 transition-all">
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-sm font-black text-neutral-400 uppercase tracking-widest">सक्रिय विवाद</p>
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="scale"></i>
+                    </div>
+                </div>
+                <h3 class="text-4xl font-black text-brand-green">03</h3>
+                <p class="text-xs font-bold text-blue-600 mt-2">प्रगति में हैं</p>
+            </div>
+            <div
+                class="bg-white p-8 rounded-[2.5rem] shadow-xl border border-neutral-100 hover:scale-105 transition-all">
+                <div class="flex items-center justify-between mb-6">
+                    <p class="text-sm font-black text-neutral-400 uppercase tracking-widest">दस्तावेज</p>
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                </div>
+                <h3 class="text-4xl font-black text-brand-green">12</h3>
+                <p class="text-xs font-bold text-neutral-500 mt-2">सुरक्षित रूप से सेव हैं</p>
+            </div>
+        </section>
+
+        <!-- Integrated Modules -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+            <!-- Module 1: Agricultural ChatBot -->
+            <div id="chatbot"
+                class="bg-white rounded-[3rem] shadow-2xl border border-neutral-100 flex flex-col h-[600px] overflow-hidden">
+                <div class="p-8 bg-brand-green text-white flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
+                            <i data-lucide="message-square"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black font-display">कृषि कानूनी सहायक</h3>
+                            <p class="text-[10px] opacity-70">Powered by AI - Backend 2</p>
+                        </div>
+                    </div>
+                    <div class="text-xs font-bold px-3 py-1 bg-white/10 rounded-full border border-white/20">5001</div>
+                </div>
+                <div id="chat-messages" class="flex-1 p-8 overflow-y-auto space-y-4 bg-brand-cream/10">
+                    <div class="flex justify-start">
+                        <div
+                            class="bg-white p-4 rounded-3xl rounded-tl-none shadow-sm border border-neutral-100 max-w-[80%]">
+                            <p class="text-sm font-medium">नमस्ते किसान भाई! मैं समझौतासेतु सहायक हूँ। आप कृषि कानून या
+                                मंडी भाव के बारे में कुछ भी पूछ सकते हैं।</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-neutral-100 bg-white">
+                    <div class="flex gap-3">
+                        <input id="chat-input" type="text" placeholder="अपना सवाल यहाँ लिखें..."
+                            class="flex-1 px-6 py-4 bg-neutral-50 rounded-2xl border border-neutral-100 focus:outline-none focus:border-brand-green font-bold text-sm">
+                        <button onclick="sendChatMessage()"
+                            class="w-14 h-14 bg-brand-green text-white rounded-2xl flex items-center justify-center shadow-lg hover:rotate-12 transition-all">
+                            <i data-lucide="send"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2: Document Scanner / Risk Engine -->
+            <div id="scanner"
+                class="bg-white rounded-[3rem] shadow-2xl border border-neutral-100 flex flex-col items-center justify-center p-12 text-center space-y-8">
+                <div class="w-24 h-24 bg-brand-cream text-brand-green rounded-full flex items-center justify-center">
+                    <i data-lucide="file-search" class="w-12 h-12"></i>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-3xl font-black text-brand-green font-display uppercase tracking-tight">कागज की जांच
+                        (OCR)</h3>
+                    <p class="text-neutral-500 font-medium max-w-sm">
+                        अपने जमीन के कागजात या अनुबंध (Contract) की फोटो खींचें। AI आपको इसमें छिपे जोखिम बताएगा।
+                    </p>
+                </div>
+                <input type="file" id="ocr-file" class="hidden" onchange="handleOCRUpload(event)">
+                <button onclick="document.getElementById('ocr-file').click()"
+                    class="px-10 py-5 bg-brand-blue text-white rounded-3xl font-black text-xl shadow-2xl hover:scale-105 transition-all flex items-center gap-4">
+                    <i data-lucide="upload-cloud"></i> दस्तावेज अपलोड करें
+                </button>
+                <div id="ocr-status" class="text-sm font-bold text-neutral-400">Backend 1 - Port 5000</div>
+                <div id="ocr-result"
+                    class="hidden w-full p-6 bg-brand-cream/30 rounded-3xl border border-brand-green/10 text-left">
+                    <h4 class="font-black text-brand-green mb-2">जांच का परिणाम:</h4>
+                    <div id="ocr-analysis" class="text-sm text-neutral-700 whitespace-pre-wrap"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-brown p-12 text-white">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex items-center gap-3">
+                <i data-lucide="scale" class="w-8 h-8 opacity-50"></i>
+                <div>
+                    <h2 class="text-xl font-bold">समसौतासेतु</h2>
+                    <p class="text-xs opacity-50">© 2024 किसानों के लिए, किसानों द्वारा।</p>
+                </div>
+            </div>
+            <div class="flex gap-8 text-sm font-bold opacity-70">
+                <a href="#" class="hover:opacity-100 transition-opacity">होम</a>
+                <a href="#" class="hover:opacity-100 transition-opacity">गोपनीयता</a>
+                <a href="#" class="hover:opacity-100 transition-opacity">सहायता</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const messages = document.getElementById('chat-messages');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            // Add User Message
+            addMessage(text, 'user');
+            input.value = '';
+
+            try {
+                const formData = new FormData();
+                formData.append('text', text);
+
+                const response = await fetch('http://localhost:5001/chat', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                addMessage(data.text, 'bot');
+            } catch (error) {
+                console.error('Chat error:', error);
+                addMessage('क्षमा करें, सहायक से संपर्क नहीं हो पाया। कृपया सुनिश्चित करें कि बैकएंड (Port 5001) चल रहा है।', 'bot');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messages = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            div.innerHTML = `
+                <div class="p-4 rounded-3xl shadow-sm max-w-[80%] ${sender === 'user'
+                    ? 'bg-brand-green text-white rounded-tr-none'
+                    : 'bg-white text-neutral-800 rounded-tl-none border border-neutral-100'
+                }">
+                    <p class="text-sm font-medium">${text}</p>
+                </div>
+            `;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function handleOCRUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('ocr-status');
+            const resultDiv = document.getElementById('ocr-result');
+            const analysisDiv = document.getElementById('ocr-analysis');
+
+            status.textContent = 'दस्तावेज की जांच हो रही है...';
+            status.className = 'text-sm font-bold text-brand-blue animate-pulse';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('lang', 'hi');
+
+                const response = await fetch('http://localhost:5000/scan', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                resultDiv.classList.remove('hidden');
+                analysisDiv.textContent = JSON.stringify(data.analysis || data, null, 2);
+                status.textContent = 'जांच पूरी हुई!';
+                status.className = 'text-sm font-bold text-green-600';
+            } catch (error) {
+                console.error('OCR error:', error);
+                status.textContent = 'त्रुटि! बैकएंड (Port 5000) से संपर्क नहीं हो सका।';
+                status.className = 'text-sm font-bold text-red-500';
+            }
+        }
+    </script>
+</body>
+
+</html>

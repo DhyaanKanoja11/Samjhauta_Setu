@@ -1,0 +1,104 @@
+2026-02-12 17:50:32,780 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-02-12 17:50:32,780 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:13:31,519 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-02-12 18:13:31,519 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:14:44,782 | INFO | 127.0.0.1 - - [12/Feb/2026 18:14:44] "GET / HTTP/1.1" 200 -
+2026-02-12 18:14:45,027 | INFO | 127.0.0.1 - - [12/Feb/2026 18:14:45] "GET / HTTP/1.1" 200 -
+2026-02-12 18:14:45,551 | INFO | 127.0.0.1 - - [12/Feb/2026 18:14:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-12 18:18:16,083 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-02-12 18:18:16,084 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:21:26,450 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 18:21:26,451 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:21:26,453 | INFO |  * Restarting with stat
+2026-02-12 18:21:28,057 | WARNING |  * Debugger is active!
+2026-02-12 18:21:28,081 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 18:25:46,755 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 18:25:46,756 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:25:46,760 | INFO |  * Restarting with stat
+2026-02-12 18:25:48,428 | WARNING |  * Debugger is active!
+2026-02-12 18:25:48,453 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 18:34:22,049 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 18:34:22,049 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:34:22,052 | INFO |  * Restarting with stat
+2026-02-12 18:34:23,744 | WARNING |  * Debugger is active!
+2026-02-12 18:34:23,784 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 18:36:31,556 | INFO | 127.0.0.1 - - [12/Feb/2026 18:36:31] "GET / HTTP/1.1" 200 -
+2026-02-12 18:36:31,803 | INFO | 127.0.0.1 - - [12/Feb/2026 18:36:31] "GET / HTTP/1.1" 200 -
+2026-02-12 18:37:38,078 | INFO | Scan endpoint triggered
+2026-02-12 18:37:39,087 | ERROR | Scan error: tesseract is not installed or it's not in your PATH. See README file for more information.
+2026-02-12 18:37:39,093 | INFO | 127.0.0.1 - - [12/Feb/2026 18:37:39] "[35m[1mPOST /scan HTTP/1.1[0m" 500 -
+2026-02-12 18:55:38,033 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 18:55:38,033 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 18:55:38,037 | INFO |  * Restarting with stat
+2026-02-12 18:55:39,822 | WARNING |  * Debugger is active!
+2026-02-12 18:55:39,852 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 19:51:52,935 | INFO |  * Detected change in 'C:\\Users\\dhyaa\\Downloads\\setu\\backend\\app.py', reloading
+2026-02-12 19:51:52,968 | INFO |  * Detected change in 'C:\\Users\\dhyaa\\Downloads\\setu\\backend\\app.py', reloading
+2026-02-12 19:51:53,318 | INFO |  * Restarting with stat
+2026-02-12 19:51:53,331 | INFO |  * Restarting with stat
+2026-02-12 19:51:55,031 | INFO |  * Detected change in 'C:\\Users\\dhyaa\\Downloads\\setu\\backend\\app.py', reloading
+2026-02-12 19:51:55,352 | INFO |  * Restarting with stat
+2026-02-12 19:51:55,384 | WARNING |  * Debugger is active!
+2026-02-12 19:51:55,407 | WARNING |  * Debugger is active!
+2026-02-12 19:51:55,428 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 19:51:55,451 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 19:51:57,219 | WARNING |  * Debugger is active!
+2026-02-12 19:51:57,248 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 19:51:57,379 | INFO |  * Detected change in 'C:\\Users\\dhyaa\\Downloads\\setu\\backend\\app.py', reloading
+2026-02-12 20:08:35,092 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 20:08:35,094 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 20:08:35,107 | INFO |  * Restarting with stat
+2026-02-12 20:08:37,553 | WARNING |  * Debugger is active!
+2026-02-12 20:08:37,585 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 20:37:35,958 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 20:37:35,959 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 20:37:35,963 | INFO |  * Restarting with stat
+2026-02-12 20:37:38,262 | WARNING |  * Debugger is active!
+2026-02-12 20:37:38,316 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 20:38:05,688 | INFO | 127.0.0.1 - - [12/Feb/2026 20:38:05] "[33mHEAD /%20health HTTP/1.1[0m" 404 -
+2026-02-12 20:38:05,704 | INFO | 127.0.0.1 - - [12/Feb/2026 20:38:05] "[33mGET /%20health HTTP/1.1[0m" 404 -
+2026-02-12 20:38:26,416 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 20:38:26,418 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 20:38:26,422 | INFO |  * Restarting with stat
+2026-02-12 20:38:28,926 | WARNING |  * Debugger is active!
+2026-02-12 20:38:28,973 | INFO |  * Debugger PIN: 414-861-512
+2026-02-12 21:04:00,206 | INFO | 127.0.0.1 - - [12/Feb/2026 21:04:00] "HEAD /health HTTP/1.1" 200 -
+2026-02-12 21:04:00,213 | INFO | 127.0.0.1 - - [12/Feb/2026 21:04:00] "GET /health HTTP/1.1" 200 -
+2026-02-12 21:09:15,744 | INFO | Scan endpoint triggered
+2026-02-12 21:09:16,551 | ERROR | Scan error: tesseract is not installed or it's not in your PATH. See README file for more information.
+2026-02-12 21:09:16,554 | INFO | 127.0.0.1 - - [12/Feb/2026 21:09:16] "[35m[1mPOST /scan HTTP/1.1[0m" 500 -
+2026-02-12 22:21:53,682 | INFO | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.25.170.3:5000
+2026-02-12 22:21:53,682 | INFO | [33mPress CTRL+C to quit[0m
+2026-02-12 22:21:53,704 | INFO |  * Restarting with stat
+2026-02-12 22:21:55,297 | WARNING |  * Debugger is active!
+2026-02-12 22:21:55,329 | INFO |  * Debugger PIN: 757-666-795
+2026-02-12 22:25:44,873 | INFO | Scan endpoint triggered
+2026-02-12 22:25:45,408 | ERROR | Scan error: tesseract is not installed or it's not in your PATH. See README file for more information.
+2026-02-12 22:25:45,422 | INFO | 127.0.0.1 - - [12/Feb/2026 22:25:45] "[35m[1mPOST /scan HTTP/1.1[0m" 500 -
