@@ -6,21 +6,20 @@ All rights reserved.
 
 ## Terms of Use
 
-1. **Ownership**  
+1. Ownership 
    This software, its source code, assets, and related materials ("Software") are the exclusive property of Dhyaan Kanoja and the authorized team members.
 
-2. **Restrictions**  
+2. Restrictions
    - No one outside the authorized team may copy, distribute, modify, sublicense, or commercially exploit this Software.  
    - Public use, sale, or deployment of this Software by third parties is strictly prohibited.  
    - Reverse engineering or attempting to replicate any part of this Software for public or commercial use is forbidden.
 
-3. **Permitted Use**  
+3. Permitted Use
    - Authorized team members may use, modify, and deploy the Software internally or commercially as directed by the owners.  
 
-4. **Disclaimer**  
+4. Disclaimer
    - The Software is provided "as-is" without any warranty. The authors are not liable for any damages arising from use.
 
-5. **Legal Enforcement**  
+5. Legal Enforcement
    - Violation of these terms will be subject to legal action under applicable copyright and intellectual property laws.
 
----
