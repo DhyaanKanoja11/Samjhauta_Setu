@@ -4,6 +4,7 @@ flask-limiter==3.5.0
 werkzeug==3.0.1
 groq==0.4.1
 gtts==2.4.0
+gunicorn==21.2.0
 SpeechRecognition==3.10.0
 pydub==0.25.1
 feedparser==6.0.10
