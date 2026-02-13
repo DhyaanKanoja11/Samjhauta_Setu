@@ -1,33 +1,46 @@
 import os
-import cv2
-import pytesseract
+import requests
+
+OCR_API_KEY = os.getenv("OCR_SPACE_API_KEY")
 
 
 def extract_text_from_image(image_path: str) -> str:
     """
-    Extract text from image.
-    Works locally with Tesseract.
-    Safe fallback on Render (where Tesseract isn't installed).
+    Uses OCR.Space API to extract text from image.
+    Production-safe for Render (no system dependencies).
     """
 
+    if not OCR_API_KEY:
+        return "OCR API key not configured."
+
     try:
-        if not os.path.exists(image_path):
-            raise RuntimeError("Image not found")
+        url = "https://api.ocr.space/parse/image"
 
-        image = cv2.imread(image_path)
+        with open(image_path, "rb") as image_file:
+            response = requests.post(
+                url,
+                files={"file": image_file},
+                data={
+                    "apikey": OCR_API_KEY,
+                    "language": "eng",
+                    "isOverlayRequired": False,
+                },
+                timeout=30,
+            )
 
-        if image is None:
-            raise RuntimeError("Invalid image file")
+        result = response.json()
 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if result.get("IsErroredOnProcessing"):
+            return ""
 
-        text = pytesseract.image_to_string(gray)
+        parsed_results = result.get("ParsedResults")
 
-        return text.strip()
+        if not parsed_results:
+            return ""
 
-    except pytesseract.TesseractNotFoundError:
-        # Render doesn't support Tesseract
-        return "OCR engine not available in production environment."
+        extracted_text = parsed_results[0].get("ParsedText", "").strip()
+
+        return extracted_text
 
     except Exception as e:
         return f"OCR failed: {str(e)}"
