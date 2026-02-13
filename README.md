@@ -1,331 +1,247 @@
+# 🌾 SamjhautaSetu  
+### AI-Powered Legal Clarity Platform for Indian Farmers  
 
-# Samjhauta_Setu
-A secure and structured platform to resolve disputes for the farmers of India.
-=======
-# 🌾 SamjhautaSetu
-
-> A premium, localized, and secure digital platform for Indian farmers.
-
-[![React](https://img.shields.io/badge/React-18.2-blue.svg)](https://reactjs.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)](https://flask.palletsprojects.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-yellow.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
+> 🚀 Hackathon Submission  
+> 🧠 Designed, Developed & Managed by **Team Binary Brains**
 
 ---
 
-## ✨ Features
-
-- 🌍 **Universal Translation**: Support for 6 regional languages (Hindi, English, Punjabi, Gujarati, Bhojpuri, Kannada)
-- 🤖 **AI Agricultural Assistant**: Voice-enabled chatbot with real-time news from PIB
-- 📄 **OCR Document Scanner**: Legal risk analysis for land records and contracts
-- 🎨 **Premium Dark Mode**: High-contrast, accessibility-focused UI
-- 🔒 **Enterprise Security**: Rate limiting and security header protection
-- 📱 **Responsive Design**: Works seamlessly on mobile, tablet, and desktop
+[![Frontend](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel)](https://samjhautasetu.vercel.app/)
+[![Backend 1](https://img.shields.io/badge/OCR%20Engine-Render-blue?style=for-the-badge)](https://samjhauta-setu.onrender.com/)
+[![Backend 2](https://img.shields.io/badge/AI%20Chatbot-Render-green?style=for-the-badge)](https://samjhauta-setu-1.onrender.com/)
+[![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+[![Python](https://img.shields.io/badge/Python-3.10+-yellow?style=for-the-badge&logo=python)](https://python.org/)
 
 ---
 
-## 🏗️ Architecture
+## 🌍 Live Application
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    FRONTEND (React)                      │
-│                   Port: 5173                             │
-└───────────────┬─────────────────┬───────────────────────┘
-                │                 │
-      ┌─────────▼────────┐  ┌────▼──────────────┐
-      │  BACKEND 1       │  │  BACKEND 2        │
-      │  OCR/Risk        │  │  AI Chatbot       │
-      │  Port: 5000      │  │  Port: 5001       │
-      └──────────────────┘  └───────────────────┘
-```
+🔗 **Frontend (Vercel)**  
+https://samjhautasetu.vercel.app/
+
+🔗 **Backend 1 – OCR + Risk Engine (Render)**  
+https://samjhauta-setu.onrender.com/
+
+🔗 **Backend 2 – AI Chatbot (Render)**  
+https://samjhauta-setu-1.onrender.com/
 
 ---
 
-## 🚀 Quick Start
+## 👥 About Team Binary Brains
 
-### Prerequisites
+SamjhautaSetu is a complete product creation and management initiative by **Team Binary Brains**.
 
-- **Node.js** 18+ and npm
-- **Python** 3.10+
-- **Tesseract OCR** (for document scanning)
-- **Groq API Key** (free from [console.groq.com](https://console.groq.com/))
+From system architecture, backend engineering, AI integration, security configuration, UI/UX structuring, deployment orchestration, and documentation — the entire platform lifecycle has been conceptualized and executed by our team.
 
-### Installation
-
-**1. Clone the repository**
-```bash
-git clone <repository-url>
-cd samjhauta-setu
-```
-
-**2. Set up Backend 1 (OCR/Risk Engine)**
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-python app.py  # Runs on http://localhost:5000
-```
-
-**3. Set up Backend 2 (AI Chatbot)** *(in new terminal)*
-```bash
-cd "Agriculture ChatBot"
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
-python app.py  # Runs on http://localhost:5001
-```
-
-**4. Set up Frontend** *(in new terminal)*
-```bash
-cd frontend
-npm install
-cp .env.example .env
-npm run dev  # Runs on http://localhost:5173
-```
-
-**5. Access the Application**
-```
-Open http://localhost:5173 in your browser
-```
+This project reflects both technical rigor and social responsibility.
 
 ---
 
-## 📚 Documentation
+## 🎯 The Problem We Are Addressing
 
-| Document | Description |
-|----------|-------------|
-| **[SETUP_GUIDE.md](SETUP_GUIDE.md)** | 📖 Complete step-by-step setup instructions |
-| **[PROJECT_ANALYSIS.md](PROJECT_ANALYSIS.md)** | 🔍 Technical analysis and architecture details |
-| **[CONNECTION_MAP.md](CONNECTION_MAP.md)** | 🗺️ API endpoints and data flow diagrams |
-| **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** | ⚡ Quick commands and troubleshooting |
-| **[FIXES_APPLIED.md](FIXES_APPLIED.md)** | ✅ Summary of improvements and fixes |
+Farmers across India often:
 
----
+- Sign land or supply contracts without fully understanding legal clauses  
+- Face exploitation due to complex terminology  
+- Lack real-time access to simple legal explanations  
+- Do not have multilingual digital support  
 
-## 🧪 Testing the Setup
-
-### Test Backend 1 (OCR)
-```bash
-curl http://localhost:5000/health
-# Expected: {"status": "OK"}
-```
-
-### Test Backend 2 (Chatbot)
-```bash
-curl http://localhost:5001/news
-# Expected: Array of agriculture news
-```
-
-### Test Frontend
-Open browser: `http://localhost:5173`
-- Click "Guest Mode" to login
-- Check if news feed loads
-- Try the voice assistant (floating mic button)
-- Upload a document to test OCR
+Legal language complexity → Information imbalance → Financial vulnerability.
 
 ---
 
-## 🛠️ Tech Stack
+## 💡 Our Vision
 
-### Frontend
-- **React** 18.2 - UI framework
-- **Vite** 4.5 - Build tool
-- **Tailwind CSS** 3.4 - Styling
-- **i18next** - Internationalization
-- **Axios** - HTTP client
-- **Lucide React** - Icons
+SamjhautaSetu aims to become:
 
-### Backend 1 (OCR/Risk)
-- **Flask** 3.0 - Web framework
-- **Tesseract** - OCR engine
-- **OpenCV** - Image processing
-- **Deep Translator** - Translation
-- **Flask-Limiter** - Rate limiting
+> A structured, secure, and accessible AI-driven legal assistance system for rural India.
 
-### Backend 2 (Chatbot)
-- **Flask** 3.0 - Web framework
-- **Groq API** - LLM (llama3-70b)
-- **gTTS** - Text-to-speech
-- **SpeechRecognition** - Voice input
-- **Feedparser** - RSS news feed
+It simplifies contracts, highlights risks, and provides contextual guidance — all in a farmer-friendly digital interface.
 
 ---
 
-## 🔧 Configuration
+## ✨ Core Features
 
-### Environment Variables
-
-**Frontend (`.env`)**
-```env
-VITE_API_URL_OCR=http://localhost:5000
-VITE_API_URL_CHATBOT=http://localhost:5001
-```
-
-**Backend 1 (`.env`)**
-```env
-ALLOWED_ORIGINS=http://localhost:5173
-```
-
-**Backend 2 (`.env`)**
-```env
-GROQ_API_KEY=your_groq_api_key_here
-ALLOWED_ORIGINS=http://localhost:5173
-```
+### 📄 Smart Contract Scanner
+- Upload document image
+- OCR extracts text
+- AI-based legal risk analysis
+- Structured clause explanation
 
 ---
 
-## 📡 API Endpoints
-
-### Backend 1 (Port 5000)
-- `GET /health` - Health check
-- `POST /scan` - Upload image for OCR + risk analysis
-- `POST /analyze` - Analyze text for legal risks
-
-### Backend 2 (Port 5001)
-- `POST /chat` - Chat with AI (text or audio)
-- `GET /news` - Get agriculture news from PIB
+### ⚖️ Risk Analysis Engine
+Detects:
+- Hidden penalties  
+- One-sided obligations  
+- High-risk terms  
+- Ambiguous legal phrasing  
 
 ---
 
-## 🐛 Troubleshooting
-
-### Backend won't start
-```bash
-# Ensure virtual environment is activated
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### Frontend can't connect
-```bash
-# Check if backends are running
-curl http://localhost:5000/health
-curl http://localhost:5001/news
-```
-
-### Chatbot not responding
-- Verify `GROQ_API_KEY` is set in `Agriculture ChatBot/.env`
-- Get free API key from [console.groq.com](https://console.groq.com/)
-
-For more troubleshooting, see **[SETUP_GUIDE.md](SETUP_GUIDE.md)**
+### 🤖 AI Agricultural Assistant
+- Voice-enabled chatbot  
+- Context-aware responses  
+- Multilingual interaction  
+- Agriculture news feed integration  
 
 ---
 
-## 🎯 Project Structure
+### 🌍 Regional Language Support
+Currently supports:
+- हिन्दी (Hindi)
+- English
+- ਪੰਜਾਬੀ (Punjabi)
+- ગુજરાતી (Gujarati)
+- भोजपुरी (Bhojpuri)
+- ಕನ್ನಡ (Kannada)
 
-```
-samjhauta-setu/
-├── frontend/                 # React application
-│   ├── src/
-│   │   ├── components/       # UI components
-│   │   ├── pages/            # Page components
-│   │   ├── services/         # API integration
-│   │   └── i18n.js           # Translations
-│   └── .env.example
+Language expansion is ongoing.
+
+---
+
+### 🔒 Security & Protection
+- Rate limiting
+- CORS control
+- Secure HTTP headers
+- File validation
+- Temporary file cleanup
+- Production-ready server configuration
+
+---
+
+## 🏗 System Architecture
+
+                ┌──────────────────────────────┐
+                │        FRONTEND (React)       │
+                │     Vercel Deployment         │
+                └───────────────┬───────────────┘
+                                │
+           ┌────────────────────┼────────────────────┐
+           │                                         │
+┌───────────▼───────────┐                 ┌──────────▼───────────┐
+│ Backend 1 (Flask)     │                 │ Backend 2 (Flask)    │
+│ OCR + Risk Engine     │                 │  AI Chatbot Engine   │
+│ Render Deployment     │                 │ Render Deployment    │
+└───────────────────────┘                 └──────────────────────┘
+
+
+---
+
+## 🧠 Technology Stack
+
+### 🖥 Frontend
+- React 18
+- Vite
+- Tailwind CSS
+- i18next
+- Axios
+- Lucide Icons
+
+### 🧾 Backend 1 (OCR & Risk Engine)
+- Python
+- Flask
+- OpenCV
+- Tesseract OCR
+- Custom risk detection logic
+- Flask-Limiter
+- Flask-Talisman
+
+### 🤖 Backend 2 (AI Chatbot)
+- Python
+- Flask
+- Groq API (LLM)
+- gTTS (Text-to-speech)
+- SpeechRecognition
+- Feedparser (Agriculture news)
+
+---
+
+## 🧪 How It Works
+
+1. Farmer uploads a contract image  
+2. OCR extracts text  
+3. Risk engine analyzes clauses  
+4. Simplified explanation is generated  
+5. Chatbot assists with follow-up questions  
+6. Voice output available for accessibility  
+
+---
+
+## 📂 Repository Structure
+
+Samjhauta_Setu/
 │
-├── backend/                  # OCR/Risk Engine
-│   ├── ocr/                  # OCR logic
-│   ├── risk/                 # Risk analysis
-│   ├── app.py                # Main server
-│   └── .env.example
+├── frontend/ # React Application
+├── backend/ # OCR & Risk Backend
+├── Agriculture ChatBot/ # AI Chatbot Backend
 │
-├── Agriculture ChatBot/      # AI Chatbot
-│   ├── app.py                # Main server
-│   ├── templates/            # HTML templates
-│   └── .env.example
-│
-└── docs/                     # Documentation
-    ├── SETUP_GUIDE.md
-    ├── PROJECT_ANALYSIS.md
-    ├── CONNECTION_MAP.md
-    ├── QUICK_REFERENCE.md
-    └── FIXES_APPLIED.md
-```
+├── SETUP_GUIDE.md
+└── README.md
+
 
 ---
 
-## 🌐 Supported Languages
+## 🚀 Current Development Status
 
-- 🇮🇳 हिन्दी (Hindi) - Default
-- 🇬🇧 English
-- 🇮🇳 ਪੰਜਾਬੀ (Punjabi)
-- 🇮🇳 ગુજરાતી (Gujarati)
-- 🇮🇳 भोजपुरी (Bhojpuri)
-- 🇮🇳 ಕನ್ನಡ (Kannada)
+SamjhautaSetu is an evolving system.
 
----
+Several enhancements are currently under development:
 
-## 🔒 Security Features
+- Advanced risk scoring algorithms  
+- Context-aware clause comparison  
+- Expanded language datasets  
+- Improved voice interaction pipeline  
+- Real authentication system  
+- Persistent database storage  
+- API-level monitoring and logging  
+- Government scheme integration  
+- Offline-capable lightweight version  
 
-- ✅ Rate limiting on all endpoints
-- ✅ CORS configuration
-- ✅ Security headers (X-Frame-Options, CSP, etc.)
-- ✅ Input validation and sanitization
-- ✅ File upload restrictions
-- ✅ Environment-based configuration
+This is an actively growing project — not a static prototype.
 
 ---
 
-## 📈 Roadmap
+## 📈 Future Expansion Roadmap
 
-- [ ] Real authentication system (JWT)
-- [ ] Database integration
-- [ ] Advanced risk scoring algorithms
-- [ ] Mobile app (React Native)
-- [ ] Offline mode support
-- [ ] More regional languages
-- [ ] Integration with government APIs
+Phase 1: Legal Awareness Tool
+Phase 2: Risk Intelligence Engine
+Phase 3: Smart Advisory Platform
+Phase 4: Scalable Rural AI Network
+
 
 ---
 
-## 🤝 Contributing
+## 🎥 Hackathon Demo Flow
 
-Contributions are welcome! Please read our contributing guidelines before submitting PRs.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1. Visit live platform  
+2. Continue as Guest  
+3. Upload contract  
+4. View OCR extraction  
+5. Review risk analysis  
+6. Ask chatbot follow-up question  
+7. Use voice feature  
 
 ---
 
-## 👥 Team
+## 🔐 Ownership & Usage Notice
 
-Built with ❤️ for Indian farmers
+This project is the intellectual creation and managed work of **Team Binary Brains**.
 
----
-
-## 🙏 Acknowledgments
-
-- **PIB (Press Information Bureau)** for agriculture news feed
-- **Groq** for providing fast LLM inference
-- **Tesseract OCR** for text extraction
-- **Open source community** for amazing tools
+All rights to structure, logic, system design, and deployment architecture are reserved by the team.
 
 ---
 
-## 📞 Support
+## 🙏 Acknowledgements
 
-For issues and questions:
-- 📖 Check [SETUP_GUIDE.md](SETUP_GUIDE.md)
-- 🔍 Review [PROJECT_ANALYSIS.md](PROJECT_ANALYSIS.md)
-- ⚡ See [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
+- PIB (Press Information Bureau) for agriculture news
+- Groq for LLM inference
+- Tesseract OCR
+- Open source ecosystem
 
 ---
 
-**SamjhautaSetu** - *Connecting Farmers to Legal Clarity* 🌾
-
-[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com)
-[![For Farmers](https://img.shields.io/badge/For-Indian%20Farmers-green.svg)](https://github.com)
->>>>>>> f067029 (Initial project upload)
+# 🌾 SamjhautaSetu  
+### Connecting Farmers to Legal Clarity  
+### Built & Managed by Team Binary Brains
