@@ -17,7 +17,10 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 # Security: Hardened CORS
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, origins=[
+    "http://localhost:5173",
+    "https://samjhautasetu.vercel.app/"
+])
 
 # Rate Limiting for security
 limiter = Limiter(
@@ -118,7 +121,9 @@ def get_answer(question):
         if key.lower() in question.lower():
             return val
     return "माफ़ करें, मैं अभी इस बारे में जानकारी नहीं जुटा पा रहा हूँ। कृपया इंटरनेट या मंडी भाव की जाँच करें।"
-
+@app.route("/")
+def home():
+    return "Server running"
 @app.after_request
 def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
