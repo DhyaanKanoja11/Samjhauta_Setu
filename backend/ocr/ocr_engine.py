@@ -1,183 +1,45 @@
 import os
-import uuid
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from flask_talisman import Talisman
-
-from config import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, DEFAULT_OUTPUT_LANG
-from ocr.ocr_engine import extract_text_from_image
-from risk.risk_engine import analyze_contract
-from utils.logger import logger
+import pytesseract
+import cv2
 
 
-# ----------------------------
-# App Initialization
-# ----------------------------
+# If Tesseract path is provided via ENV (optional)
+TESSERACT_PATH = os.environ.get("TESSERACT_PATH")
 
-app = Flask(__name__)
-
-# Security Headers
-Talisman(app, content_security_policy=None, force_https=False)
-
-# ✅ Proper CORS for Vercel + Localhost
-CORS(
-    app,
-    origins=[
-        "http://localhost:5173",
-        "https://samjhautasetu.vercel.app"
-    ],
-    supports_credentials=False,
-    allow_headers=["Content-Type", "Authorization"],
-    methods=["GET", "POST", "OPTIONS"]
-)
-
-# Rate Limiting
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["100 per day", "20 per minute"],
-    storage_uri="memory://"
-)
-
-# Ensure upload folder exists (Render-safe path recommended in config.py)
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+if TESSERACT_PATH:
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 
-# ----------------------------
-# Security Headers (Extra)
-# ----------------------------
+def extract_text_from_image(image_path: str) -> str:
+    """
+    Extract text from an image using Tesseract OCR.
+    """
 
-@app.after_request
-def add_security_headers(response):
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    return response
+    if not os.path.exists(image_path):
+        raise RuntimeError("Image file not found")
 
-
-# ----------------------------
-# Utility: File Validation
-# ----------------------------
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-# ----------------------------
-# Routes
-# ----------------------------
-
-@app.route("/", methods=["GET"])
-def home():
-    return "Samjhauta Setu backend running", 200
-
-
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "OK"}), 200
-
-
-# ----------------------------
-# Analyze Raw Text
-# ----------------------------
-
-@app.route("/analyze", methods=["POST"])
-@limiter.limit("10 per minute")
-def analyze_text():
     try:
-        data = request.get_json()
+        # Read image
+        image = cv2.imread(image_path)
 
-        if not data or "text" not in data:
-            return jsonify({"success": False, "error": "No text provided"}), 400
+        if image is None:
+            raise RuntimeError("Failed to read image")
 
-        text = data.get("text", "").strip()
-        output_lang = data.get("lang", DEFAULT_OUTPUT_LANG)
+        # Convert to grayscale
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        if not text:
-            return jsonify({"success": False, "error": "Empty text"}), 400
+        # Optional thresholding for better OCR
+        gray = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)[1]
 
-        logger.info("Analyze endpoint triggered")
+        # Extract text
+        text = pytesseract.image_to_string(gray)
 
-        result = analyze_contract(text, output_lang)
+        return text.strip()
 
-        return jsonify({
-            "success": True,
-            "analysis": result
-        }), 200
+    except pytesseract.TesseractNotFoundError:
+        raise RuntimeError(
+            "Tesseract OCR is not installed on the server"
+        )
 
     except Exception as e:
-        logger.exception("Analyze error")
-        return jsonify({"success": False, "error": "Internal server error"}), 500
-
-
-# ----------------------------
-# OCR + Analyze Document
-# ----------------------------
-
-@app.route("/scan", methods=["POST"])
-@limiter.limit("5 per minute")
-def scan_document():
-    filepath = None
-    try:
-        if "file" not in request.files:
-            return jsonify({"success": False, "error": "No file uploaded"}), 400
-
-        file = request.files["file"]
-        output_lang = request.form.get("lang", DEFAULT_OUTPUT_LANG)
-
-        if not file.filename:
-            return jsonify({"success": False, "error": "Empty filename"}), 400
-
-        if not allowed_file(file.filename):
-            return jsonify({"success": False, "error": "Unsupported file type"}), 400
-
-        filename = f"{uuid.uuid4().hex}_{file.filename}"
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(filepath)
-
-        logger.info("Scan endpoint triggered")
-
-        # 🔎 OCR
-        text = extract_text_from_image(filepath)
-
-        if not text or len(text.strip()) < 20:
-            return jsonify({
-                "success": False,
-                "error": "OCR failed or insufficient readable text"
-            }), 400
-
-        # 📊 Risk Analysis
-        analysis = analyze_contract(text, output_lang)
-
-        return jsonify({
-            "success": True,
-            "ocr_text_preview": text[:2000],
-            "analysis": analysis
-        }), 200
-
-    except RuntimeError as e:
-        # Clean OCR-specific errors (like missing Tesseract)
-        return jsonify({"success": False, "error": str(e)}), 501
-
-    except Exception as e:
-        logger.exception("Scan error")
-        return jsonify({"success": False, "error": "Internal server error"}), 500
-
-    finally:
-        if filepath and os.path.exists(filepath):
-            try:
-                os.remove(filepath)
-            except Exception:
-                pass
-
-
-# ----------------------------
-# Entry Point
-# ----------------------------
-
-if __name__ == "__main__":
-    # Render provides PORT automatically
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+        raise RuntimeError(f"OCR processing failed: {str(e)}")
