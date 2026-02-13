@@ -1,21 +1,17 @@
 # 🌾 SamjhautaSetu  
 ### AI-Powered Legal Clarity Platform for Indian Farmers  
 
-> 🚀 Hackathon Submission  
-> 🧠 Designed, Developed & Managed by **Team Binary Brains**
+>  Designed, Developed & Managed by **Team Binary Brains**
 
 ---
 
-[![Frontend](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel)](https://samjhautasetu.vercel.app/)
-[![Backend 1](https://img.shields.io/badge/OCR%20Engine-Render-blue?style=for-the-badge)](https://samjhauta-setu.onrender.com/)
-[![Backend 2](https://img.shields.io/badge/AI%20Chatbot-Render-green?style=for-the-badge)](https://samjhauta-setu-1.onrender.com/)
-[![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
-[![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
-[![Python](https://img.shields.io/badge/Python-3.10+-yellow?style=for-the-badge&logo=python)](https://python.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-Vercel-black?style=for-the-badge&logo=vercel)](https://samjhautasetu.vercel.app/) [![Backend 1](https://img.shields.io/badge/OCR%20Engine-Render-blue?style=for-the-badge)](https://samjhauta-setu.onrender.com/)
+[![Backend 2](https://img.shields.io/badge/AI%20Chatbot-Render-green?style=for-the-badge)](https://samjhauta-setu-1.onrender.com/) [![React](https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/) [![Python](https://img.shields.io/badge/Python-3.10+-yellow?style=for-the-badge&logo=python)](https://python.org/)
 
 ---
 
-## 🌍 Live Application
+##  Live Application
 
 🔗 **Frontend (Vercel)**  
 https://samjhautasetu.vercel.app/
@@ -28,17 +24,17 @@ https://samjhauta-setu-1.onrender.com/
 
 ---
 
-## 👥 About Team Binary Brains
+##  About Team Binary Brains
 
 SamjhautaSetu is a complete product creation and management initiative by **Team Binary Brains**.
 
-From system architecture, backend engineering, AI integration, security configuration, UI/UX structuring, deployment orchestration, and documentation — the entire platform lifecycle has been conceptualized and executed by our team.
+From system architecture, backend engineering, AI integration, security configuration, UI/UX structuring, deployment orchestration, and documentation , the entire platform lifecycle has been conceptualized and executed by our team.
 
 This project reflects both technical rigor and social responsibility.
 
 ---
 
-## 🎯 The Problem We Are Addressing
+##  The Problem We Are Addressing
 
 Farmers across India often:
 
@@ -51,17 +47,17 @@ Legal language complexity → Information imbalance → Financial vulnerability.
 
 ---
 
-## 💡 Our Vision
+##  Our Vision
 
 SamjhautaSetu aims to become:
 
 > A structured, secure, and accessible AI-driven legal assistance system for rural India.
 
-It simplifies contracts, highlights risks, and provides contextual guidance — all in a farmer-friendly digital interface.
+It simplifies contracts, highlights risks, and provides contextual guidance , all in a farmer-friendly digital interface.
 
 ---
 
-## ✨ Core Features
+##  Core Features
 
 ### 📄 Smart Contract Scanner
 - Upload document image
@@ -71,7 +67,7 @@ It simplifies contracts, highlights risks, and provides contextual guidance — 
 
 ---
 
-### ⚖️ Risk Analysis Engine
+###  Risk Analysis Engine
 Detects:
 - Hidden penalties  
 - One-sided obligations  
@@ -80,7 +76,7 @@ Detects:
 
 ---
 
-### 🤖 AI Agricultural Assistant
+###  AI Agricultural Assistant
 - Voice-enabled chatbot  
 - Context-aware responses  
 - Multilingual interaction  
@@ -88,7 +84,7 @@ Detects:
 
 ---
 
-### 🌍 Regional Language Support
+###  Regional Language Support
 Currently supports:
 - हिन्दी (Hindi)
 - English
@@ -101,7 +97,7 @@ Language expansion is ongoing.
 
 ---
 
-### 🔒 Security & Protection
+###  Security & Protection
 - Rate limiting
 - CORS control
 - Secure HTTP headers
@@ -111,25 +107,30 @@ Language expansion is ongoing.
 
 ---
 
-## 🏗 System Architecture
+##  System Architecture
 
-                ┌──────────────────────────────┐
-                │        FRONTEND (React)       │
-                │     Vercel Deployment         │
-                └───────────────┬───────────────┘
-                                │
-           ┌────────────────────┼────────────────────┐
-           │                                         │
-┌───────────▼───────────┐                 ┌──────────▼───────────┐
-│ Backend 1 (Flask)     │                 │ Backend 2 (Flask)    │
-│ OCR + Risk Engine     │                 │  AI Chatbot Engine   │
-│ Render Deployment     │                 │ Render Deployment    │
-└───────────────────────┘                 └──────────────────────┘
-
+                                  Users (Browser)
+                                        │
+                                        ▼
+                    ┌──────────────────────────────────────┐
+                    │          FRONTEND (React)            │
+                    │        Deployed on Vercel            │
+                    │  https://samjhautasetu.vercel.app    │
+                    └──────────────────┬───────────────────┘
+                                       │
+                        ┌──────────────┴──────────────┐
+                        │                             │
+                        ▼                             ▼
+        ┌──────────────────────────────┐   ┌──────────────────────────────┐
+        │      Backend 1 (Flask)       │   │      Backend 2 (Flask)       │
+        │      OCR + Risk Engine       │   │      AI Chatbot Engine       │
+        │      Deployed on Render      │   │      Deployed on Render      │
+        │  samjhauta-setu.onrender.com │   │ samjhauta-setu-1.onrender.com│
+        └──────────────────────────────┘   └──────────────────────────────┘
 
 ---
 
-## 🧠 Technology Stack
+##  Technology Stack
 
 ### 🖥 Frontend
 - React 18
@@ -139,7 +140,7 @@ Language expansion is ongoing.
 - Axios
 - Lucide Icons
 
-### 🧾 Backend 1 (OCR & Risk Engine)
+###  Backend 1 (OCR & Risk Engine)
 - Python
 - Flask
 - OpenCV
@@ -148,7 +149,7 @@ Language expansion is ongoing.
 - Flask-Limiter
 - Flask-Talisman
 
-### 🤖 Backend 2 (AI Chatbot)
+###  Backend 2 (AI Chatbot)
 - Python
 - Flask
 - Groq API (LLM)
@@ -158,7 +159,7 @@ Language expansion is ongoing.
 
 ---
 
-## 🧪 How It Works
+##  How It Works
 
 1. Farmer uploads a contract image  
 2. OCR extracts text  
@@ -169,8 +170,8 @@ Language expansion is ongoing.
 
 ---
 
-## 📂 Repository Structure
-
+##  Repository Structure
+```
 Samjhauta_Setu/
 │
 ├── frontend/ # React Application
@@ -179,11 +180,11 @@ Samjhauta_Setu/
 │
 ├── SETUP_GUIDE.md
 └── README.md
-
+```
 
 ---
 
-## 🚀 Current Development Status
+##  Current Development Status
 
 SamjhautaSetu is an evolving system.
 
@@ -199,33 +200,22 @@ Several enhancements are currently under development:
 - Government scheme integration  
 - Offline-capable lightweight version  
 
-This is an actively growing project — not a static prototype.
+This is an actively growing project , not a static prototype.
 
 ---
 
-## 📈 Future Expansion Roadmap
+##  Future Expansion Roadmap
 
-Phase 1: Legal Awareness Tool
-Phase 2: Risk Intelligence Engine
-Phase 3: Smart Advisory Platform
-Phase 4: Scalable Rural AI Network
+- Phase 1: Legal Awareness Tool
+- Phase 2: Risk Intelligence Engine and Groq for LLM inference 
+- Phase 3: Smart Advisory Platform
+- Phase 4: Scalable Rural AI Network 
 
 
----
-
-## 🎥 Hackathon Demo Flow
-
-1. Visit live platform  
-2. Continue as Guest  
-3. Upload contract  
-4. View OCR extraction  
-5. Review risk analysis  
-6. Ask chatbot follow-up question  
-7. Use voice feature  
 
 ---
 
-## 🔐 Ownership & Usage Notice
+##  Ownership & Usage Notice
 
 This project is the intellectual creation and managed work of **Team Binary Brains**.
 
@@ -233,10 +223,9 @@ All rights to structure, logic, system design, and deployment architecture are r
 
 ---
 
-## 🙏 Acknowledgements
+##  Acknowledgements
 
 - PIB (Press Information Bureau) for agriculture news
-- Groq for LLM inference
 - Tesseract OCR
 - Open source ecosystem
 
