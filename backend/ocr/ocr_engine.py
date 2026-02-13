@@ -1,28 +1,20 @@
-import os
-import pytesseract
-from PIL import Image
 import shutil
+import pytesseract
+from .image_preprocess import preprocess_image
 
-# ---------------------------------------------------
-# Check if Tesseract is available in system
-# ---------------------------------------------------
 
-def is_tesseract_available():
+def _tesseract_available() -> bool:
     return shutil.which("tesseract") is not None
 
 
-# ---------------------------------------------------
-# OCR Extraction Function
-# ---------------------------------------------------
+def extract_text_from_image(image_path: str) -> str:
+    """
+    Uses Tesseract if available.
+    Raises RuntimeError with a clear message if not available.
+    """
+    if not _tesseract_available():
+        raise RuntimeError("OCR not available on this server (Tesseract missing).")
 
-def extract_text_from_image(image_path):
-    if not is_tesseract_available():
-        raise RuntimeError("Tesseract OCR is not installed on this server.")
-
-    try:
-        image = Image.open(image_path)
-        text = pytesseract.image_to_string(image)
-        return text
-
-    except Exception as e:
-        raise RuntimeError(f"OCR processing failed: {str(e)}")
+    img = preprocess_image(image_path)
+    text = pytesseract.image_to_string(img)
+    return text
