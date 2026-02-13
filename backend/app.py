@@ -16,12 +16,15 @@ from utils.logger import logger
 # ----------------------------
 
 app = Flask(__name__)
-# Security Tweak: Talisman for headers
-Talisman(app, content_security_policy=None, force_https=False)
-# Robust CORS configuration
-CORS(app, resources={r"/*": {"origins": "*"}}, 
-     allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],
-     supports_credentials=True)
+
+# Security Headers (handled via proxy on Render)
+Talisman(app, content_security_policy=None)
+
+# Secure CORS Configuration
+CORS(app, origins=[
+    "http://localhost:5173",  # Local development
+    "https://samjhautasetu.vercel.app/"  # Replace with actual Vercel URL
+])
 
 # Rate Limiting
 limiter = Limiter(
@@ -31,6 +34,7 @@ limiter = Limiter(
     storage_uri="memory://"
 )
 
+# Additional Security Headers
 @app.after_request
 def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
@@ -38,6 +42,7 @@ def add_security_headers(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     return response
 
+# Ensure upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
@@ -148,8 +153,9 @@ def scan_document():
 
 
 # ----------------------------
-# Entry Point
+# Entry Point (Render Compatible)
 # ----------------------------
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
