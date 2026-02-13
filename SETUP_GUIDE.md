@@ -1,4 +1,4 @@
-````markdown
+
 # 🛠 SETUP_GUIDE.md  
 ## SamjhautaSetu – Local Development Setup Guide  
 
@@ -11,12 +11,12 @@
 
 Before starting, make sure the following are installed on your system:
 
-### ✅ Required Software
+###  Required Software
 
 - **Node.js 18+**
   ```bash
   node -v
-````
+  ```
 
 * **Python 3.10+**
 
@@ -31,9 +31,9 @@ Before starting, make sure the following are installed on your system:
 
 ---
 
-### ⚙ Optional (Recommended for Full Features)
+###  Optional (Recommended for Full Features)
 
-#### 🧾 Tesseract OCR (Required for document scanning)
+####  Tesseract OCR (Required for document scanning)
 
 * **Windows:**
   Download from:
@@ -53,7 +53,7 @@ Before starting, make sure the following are installed on your system:
 
 ---
 
-# 📂 1️⃣ Clone the Repository
+# 1️ Clone the Repository
 
 ```bash
 git clone https://github.com/DhyaanKanoja11/Samjhauta_Setu.git
@@ -62,7 +62,7 @@ cd Samjhauta_Setu
 
 ---
 
-# 🔧 2️⃣ Backend 1 Setup (OCR + Risk Engine)
+# 2️ Backend 1 Setup (OCR + Risk Engine)
 
 Navigate to backend folder:
 
@@ -146,7 +146,7 @@ Expected response:
 
 ---
 
-# 🤖 3️⃣ Backend 2 Setup (AI Chatbot)
+#  Backend 2 Setup (AI Chatbot)
 
 Open a **new terminal window**.
 
@@ -235,7 +235,7 @@ You should receive agriculture news JSON.
 
 ---
 
-# 🖥 4️⃣ Frontend Setup
+#  Frontend Setup
 
 Open a **new terminal window**.
 
@@ -284,7 +284,7 @@ http://localhost:5173
 
 ---
 
-# 🌐 5️⃣ Access the Application
+#  Access the Application
 
 Open your browser:
 
@@ -294,25 +294,25 @@ http://localhost:5173
 
 ---
 
-# 🧪 Local Testing Checklist
+#  Local Testing Checklist
 
-### ✅ Login
+###  Login
 
 * Click "Guest Mode"
 * Dashboard loads
 
-### ✅ News Feed
+###  News Feed
 
 * Agriculture news visible
 * Confirms Backend 2 working
 
-### ✅ Voice Assistant
+###  Voice Assistant
 
 * Click microphone button
 * Send text
 * Receive response
 
-### ✅ Document Scanner
+###  Document Scanner
 
 * Upload image
 * OCR extracts text
@@ -320,11 +320,11 @@ http://localhost:5173
 
 ---
 
-# 🐛 Troubleshooting
+#  Troubleshooting
 
 ---
 
-## ❌ Backend Not Starting
+##  Backend Not Starting
 
 **Error: ModuleNotFoundError**
 
@@ -337,7 +337,7 @@ pip install -r requirements.txt
 
 ---
 
-## ❌ Frontend Cannot Connect
+##  Frontend Cannot Connect
 
 Check if both backends are running:
 
@@ -350,7 +350,7 @@ If not, restart them.
 
 ---
 
-## ❌ Chatbot Not Responding
+##  Chatbot Not Responding
 
 Check:
 
@@ -359,7 +359,7 @@ Check:
 
 ---
 
-## ❌ OCR Not Working
+##  OCR Not Working
 
 Make sure Tesseract is installed.
 
@@ -373,7 +373,7 @@ If not found → install Tesseract.
 
 ---
 
-## ❌ Port Already In Use
+##  Port Already In Use
 
 Kill process:
 
@@ -392,7 +392,7 @@ lsof -ti:5000 | xargs kill -9
 
 ---
 
-# 📌 Development Notes
+#  Development Notes
 
 * Both backends must run simultaneously
 * Frontend connects to both
@@ -401,7 +401,7 @@ lsof -ti:5000 | xargs kill -9
 
 ---
 
-# 🚀 Local Setup Summary
+#  Local Setup Summary
 
 You should now have:
 
@@ -423,4 +423,5 @@ For production deployment, refer to `README.md`.
 
 ### Built & Managed by Team Binary Brains
 
-```
+
+
