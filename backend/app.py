@@ -6,7 +6,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_talisman import Talisman
 
-from config import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, DEFAULT_OUTPUT_LANG, ALLOWED_ORIGINS
+from config import UPLOAD_FOLDER, ALLOWED_EXTENSIONS, DEFAULT_OUTPUT_LANG
 from ocr.ocr_engine import extract_text_from_image
 from risk.risk_engine import analyze_contract
 from utils.logger import logger
@@ -19,11 +19,13 @@ from utils.logger import logger
 app = Flask(__name__)
 
 Talisman(app, content_security_policy=None, force_https=False)
-
 CORS(
     app,
-    origins=ALLOWED_ORIGINS,
     supports_credentials=False,
+    origins=[
+        "http://localhost:5173",
+        "https://samjhautasetu.vercel.app"
+    ],
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "OPTIONS"]
 )
