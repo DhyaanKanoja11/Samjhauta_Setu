@@ -110,22 +110,21 @@ def analyze_text():
 # ----------------------------
 # OCR + Analyze Document
 # ----------------------------
-
 @app.route("/scan", methods=["POST"])
 @limiter.limit("5 per minute")
 def scan_document():
     try:
         if "file" not in request.files:
-            return jsonify({"error": "No file uploaded"}), 400
+            return jsonify({"success": False, "error": "No file uploaded"}), 400
 
         file = request.files["file"]
         output_lang = request.form.get("lang", DEFAULT_OUTPUT_LANG)
 
         if file.filename == "":
-            return jsonify({"error": "Empty filename"}), 400
+            return jsonify({"success": False, "error": "Empty filename"}), 400
 
         if not allowed_file(file.filename):
-            return jsonify({"error": "Unsupported file type"}), 400
+            return jsonify({"success": False, "error": "Unsupported file type"}), 400
 
         filename = f"{uuid.uuid4().hex}_{file.filename}"
         filepath = os.path.join(UPLOAD_FOLDER, filename)
@@ -133,7 +132,14 @@ def scan_document():
 
         logger.info("Scan endpoint triggered")
 
-        text = extract_text_from_image(filepath)
+        # OCR
+        try:
+            text = extract_text_from_image(filepath)
+        except RuntimeError as ocr_error:
+            return jsonify({
+                "success": False,
+                "error": str(ocr_error)
+            }), 500
 
         if not text or len(text.strip()) < 20:
             return jsonify({
@@ -151,12 +157,14 @@ def scan_document():
 
     except Exception as e:
         logger.error(f"Scan error: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
     finally:
         if "filepath" in locals() and os.path.exists(filepath):
             os.remove(filepath)
-
 
 # ----------------------------
 # Entry Point (Render Compatible)
