@@ -1,4 +1,5 @@
 import os
+import pytesseract
 import uuid
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -15,6 +16,11 @@ from utils.logger import logger
 # App Initialization
 # ----------------------------
 
+if os.name == 'nt': # Windows
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+else: # Linux (Render/Docker)
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+    
 app = Flask(__name__)
 
 # Security Headers (handled via proxy on Render)
