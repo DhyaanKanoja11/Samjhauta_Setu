@@ -69,12 +69,36 @@ export default function LoginPage() {
 
         try {
             const res = await confirmationResult.confirm(otp);
-            const user = res.user;
+            const user = res.user; // Firebase returns the user details here
             
-            // Success! Save user data
+            // Success! Mark as authenticated
             localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('userName', 'Farmer'); // You can fetch real name later
-            navigate('/dashboard');
+            window.dispatchEvent(new Event('auth-update'));
+
+            // CHECK: Is this a returning user or a new user?
+            const existingProfile = localStorage.getItem('userProfile');
+            
+            if (existingProfile) {
+                // RETURNING USER: Send them straight to the Dashboard
+                navigate('/dashboard');
+            } else {
+                // NEW USER: Create a blank profile using their verified phone number
+                const newProfile = {
+                    firstName: '',
+                    lastName: '',
+                    phone: user.phoneNumber, // Firebase gives us the +91 number securely
+                    location: '',
+                    landSize: '',
+                    mainCrops: '',
+                    language: i18n.language || 'hi'
+                };
+                
+                localStorage.setItem('userProfile', JSON.stringify(newProfile));
+                localStorage.setItem('userName', 'किसान'); // Temporary name
+                
+                // Send them to Profile page AND pass a secret message that they are new
+                navigate('/profile', { state: { isNewUser: true } });
+            }
         } catch (err) {
             console.error(err);
             setError(t('invalidOtp', 'Incorrect OTP. Please check SMS.'));
@@ -85,6 +109,7 @@ export default function LoginPage() {
     // 4. Guest Mode (Kept from your code)
     const handleGuest = () => {
         localStorage.setItem('isAuthenticated', 'guest');
+        window.dispatchEvent(new Event('auth-update'));
         localStorage.setItem('userName', 'अतिथि किसान');
         navigate('/dashboard');
     };
