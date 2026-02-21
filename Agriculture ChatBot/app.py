@@ -1,206 +1,333 @@
 import os
-import random
-import string
 import requests
-import json
-import feedparser
-from flask import Flask, render_template, request, jsonify, url_for
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from werkzeug.utils import secure_filename
-from gtts import gTTS
-import speech_recognition as sr
-from pydub import AudioSegment
-from groq import Groq
+from dotenv import load_dotenv
+from functools import lru_cache
+from datetime import datetime
 from bs4 import BeautifulSoup
+from xml.etree import ElementTree as ET
+import time
+from math import floor
+load_dotenv()
 
 app = Flask(__name__)
-# Security: Hardened CORS
-CORS(app, origins=[
-    "http://localhost:5173",
-    "https://samjhautasetu.vercel.app/"
-])
 
-# Rate Limiting for security
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["500 per day", "100 per hour"],
-    storage_uri="memory://"
-)
+# For local dev keep open. For deployment tighten allowed origins.
+CORS(app)
 
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'webm', 'wav', 'mp3', 'm4a', 'ogg'}
+DATA_GOV_API_KEY = os.environ.get("DATA_GOV_API_KEY", "")
+MANDI_RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
+SUPPORTED_STATES = ["Punjab", "Rajasthan", "Gujarat"]
+WEATHER_CACHE = {}
+WEATHER_TTL = 300  # 5 minutes
+# Simple per-IP in-memory context
+USER_CONTEXT = {}
 
-# Configuration
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/generate")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3")
-
-groq_client = None
-if GROQ_API_KEY:
-    try:
-        groq_client = Groq(api_key=GROQ_API_KEY)
-    except Exception as e:
-        print(f"Groq Init Error: {e}")
-
-# Expert System Fallback Knowledge Base
-EXPERT_SYSTEM = {
-    "भाव": "वर्तमान में मंडी भाव स्थिर हैं। गेहूं ₹2850, धान ₹1950 और मक्का ₹1800 के करीब है।",
-    "मौसम": "मौसम विभाग के अनुसार आने वाले सप्ताह में हल्की बारिश की संभावना है।",
-    "योजना": "पीएम किसान की अगली किस्त जल्द ही जारी होने वाली है।",
-    "विवाद": "समझौता सेतु के माध्यम से आप अपने अनुबंध विवादों का समाधान कर सकते हैं।",
-    "नमस्कार": "नमस्ते! मैं आपका डिजिटल कृषि साथी हूँ।",
-    "help": "I can help with mandi prices, weather, schemes, and scanning your contracts."
+# -----------------------------------------------------
+# PIB NEWS (Scrape + RSS fallback)
+# -----------------------------------------------------
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Referer": "https://www.pib.gov.in/",
 }
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+@app.route("/pib-news", methods=["GET"])
+def pib_news():
+    count = int(request.args.get("count", 10))
 
-# Local Speech to Text Integration (Zero Investment)
-def transcribe_local(filepath):
     try:
-        # Convert to WAV for SpeechRecognition
-        audio = AudioSegment.from_file(filepath)
-        wav_path = filepath.rsplit('.', 1)[0] + "_processed.wav"
-        audio.export(wav_path, format="wav")
-        
-        recognizer = sr.Recognizer()
-        with sr.AudioFile(wav_path) as source:
-            audio_data = recognizer.record(source)
-            # Free Google Web Speech API
-            text = recognizer.recognize_google(audio_data, language="hi-IN")
-            return text
+        url = "https://pib.gov.in/allRel.aspx"
+        response = requests.get(url, headers=HEADERS, timeout=15)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        news_list = []
+
+        # Primary scrape selectors (same as your code)
+        for item in soup.select("ul.release-list li, div.release-detail, .all-release li")[:count]:
+            title_tag = item.find("a")
+            if title_tag:
+                title = title_tag.get_text(strip=True)
+                link = title_tag.get("href", "")
+
+                if link and not link.startswith("http"):
+                    link = "https://pib.gov.in/" + link.lstrip("/")
+
+                date_tag = item.find("span") or item.find("p")
+                date = date_tag.get_text(strip=True) if date_tag else datetime.now().strftime("%d %b %Y")
+
+                if title:
+                    news_list.append({"title": title, "link": link, "published": date})
+
+        # Fallback RSS
+        if not news_list:
+            rss_url = "https://news.google.com/rss/search?q=site:pib.gov.in&hl=en-IN&gl=IN&ceid=IN:en"
+            rss_response = requests.get(rss_url, headers=HEADERS, timeout=10)
+            root = ET.fromstring(rss_response.content)
+
+            for item in root.findall(".//item")[:count]:
+                title = item.findtext("title", "")
+                link = item.findtext("link", "")
+                pub_date = item.findtext("pubDate", datetime.now().strftime("%a, %d %b %Y"))
+
+                if title:
+                    news_list.append({"title": title, "link": link, "published": pub_date})
+
+        if not news_list:
+            return jsonify({"error": "Could not fetch PIB news"}), 503
+
+        return jsonify({"status": "success", "total": len(news_list), "news": news_list})
+
     except Exception as e:
-        print(f"STT Error: {e}")
-        return None
+        return jsonify({"error": str(e)}), 500
 
-# Indian Ag-News Scraping (PIB)
-def get_pib_news():
-    try:
-        # Agriculture & Farmers Welfare Category
-        feed_url = "https://pib.gov.in/RssMain.aspx?ModId=4&LangId=1"
-        feed = feedparser.parse(feed_url)
-        news = []
-        for entry in feed.entries[:3]:
-            news.append({"title": entry.title, "link": entry.link})
-        return news
-    except:
-        return []
+@app.route("/top-commodities", methods=["GET"])
+def top_commodities():
+    state = request.args.get("state", "Punjab")
 
-def get_answer(question):
-    # Try Groq
-    if groq_client:
+    records = fetch_state_records(state)
+
+    if not records:
+        return jsonify({"data": []})
+
+    commodity_prices = {}
+
+    for r in records:
+        commodity = r.get("commodity")
+        modal = r.get("modal_price")
+
+        if not commodity or not modal:
+            continue
+
         try:
-            response = groq_client.chat.completions.create(
-                model="llama3-70b-8192",
-                messages=[
-                    {"role": "system", "content": "You are a professional agricultural advisor for Indian farmers. Keep answers concise and helpful. Use the user's language."},
-                    {"role": "user", "content": question}
-                ],
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            print(f"Groq Error: {e}")
+            modal = float(modal)
+        except:
+            continue
 
-    # Try Ollama (Local)
-    try:
-        response = requests.post(OLLAMA_URL, json={
-            "model": OLLAMA_MODEL,
-            "prompt": f"As an Indian Agriculture expert, answer this: {question}",
-            "stream": False
-        }, timeout=5)
-        if response.status_code == 200:
-            return response.json().get('response')
-    except:
-        pass
+        if commodity not in commodity_prices:
+            commodity_prices[commodity] = []
 
-    # Expert System Fallback
-    for key, val in EXPERT_SYSTEM.items():
-        if key.lower() in question.lower():
-            return val
-    return "माफ़ करें, मैं अभी इस बारे में जानकारी नहीं जुटा पा रहा हूँ। कृपया इंटरनेट या मंडी भाव की जाँच करें।"
-@app.route("/")
-def home():
-    return "Server running"
-@app.after_request
-def add_security_headers(response):
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    return response
+        commodity_prices[commodity].append(modal)
 
-@app.route('/news', methods=['GET'])
-@limiter.limit("20 per minute")
-def news():
-    return jsonify(get_pib_news())
+    result = []
 
-@app.route('/chat', methods=['POST'])
-@limiter.limit("30 per minute")
-def chat():
-    try:
-        # Audio Handling
-        if 'audio' in request.files:
-            audio = request.files['audio']
-            if audio and allowed_file(audio.filename):
-                filename = secure_filename(audio.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                audio.save(filepath)
-                
-                # Try Local Transcribe First
-                transcription = transcribe_local(filepath)
-                
-                # If local fails and Groq exists, try Groq Whisper
-                if not transcription and groq_client:
-                    with open(filepath, "rb") as f:
-                        transcription = groq_client.audio.transcriptions.create(
-                            model="whisper-large-v3-turbo",
-                            file=f,
-                        ).text
-                
-                if not transcription:
-                    return jsonify({'text': 'वॉइस इनपुट समझ नहीं आया। कृपया साफ बोलें या टाइप करें।'})
+    for commodity, prices in commodity_prices.items():
+        avg_price = round(sum(prices) / len(prices), 2)
 
-                answer = get_answer(transcription)
-                
-                # Convert answer to TTS
-                voice_filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-                tts = gTTS(answer, lang='hi' if 'hi' in transcription else 'en') 
-                audio_path = os.path.join("static/audio", f"{voice_filename}.mp3")
-                tts.save(audio_path)
-
-                return jsonify({
-                    'text': f"🎤 {transcription}\n\n🤖 {answer}",
-                    'voice': url_for('static', filename='audio/' + voice_filename + '.mp3')
-                })
-
-        # Text Handling
-        question = ""
-        if 'text' in request.form:
-            question = request.form['text']
-        elif request.is_json:
-            question = request.json.get('text', '')
-
-        if not question:
-            return jsonify({'text': 'No query provided'}), 400
-
-        answer = get_answer(question)
-        voice_filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        tts = gTTS(answer, lang='hi')
-        audio_path = os.path.join("static/audio", f"{voice_filename}.mp3")
-        tts.save(audio_path)
-
-        return jsonify({
-            'text': answer,
-            'voice': url_for('static', filename='audio/' + voice_filename + '.mp3')
+        result.append({
+            "crop": commodity,
+            "price": avg_price,
+            "unit": "₹/quintal"
         })
 
-    except Exception as e:
-        return jsonify({'text': f"Error: {str(e)}"}), 500
+    # Sort highest price first
+    result = sorted(result, key=lambda x: x["price"], reverse=True)
 
-if __name__ == '__main__':
-    os.makedirs("uploads", exist_ok=True)
-    os.makedirs("static/audio", exist_ok=True)
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    # Top 10
+    return jsonify({"data": result[:10]})
+# -----------------------------------------------------
+# FREE WEATHER (Open-Meteo) - NO API KEY
+# -----------------------------------------------------
+def get_weather(lat, lon):
+    try:
+        # wttr supports lat,lon format
+        url = f"https://wttr.in/{lat},{lon}?format=j1"
+
+        r = requests.get(url, timeout=10)
+
+        if r.status_code != 200:
+            return f"Weather Error (HTTP {r.status_code})"
+
+        data = r.json()
+
+        current = data["current_condition"][0]
+
+        temp = current["temp_C"]
+        humidity = current["humidity"]
+        wind = current["windspeedKmph"]
+        feels = current["FeelsLikeC"]
+        desc = current["weatherDesc"][0]["value"]
+
+        # Simple farming advisory logic
+        advisory = "Normal farming conditions."
+        if int(temp) >= 35:
+            advisory = "High temperature. Increase irrigation and avoid pesticide spraying in afternoon."
+        elif int(wind) >= 25:
+            advisory = "High wind speed. Avoid spraying chemicals."
+        elif "rain" in desc.lower():
+            advisory = "Rain expected. Avoid irrigation and protect stored crops."
+
+        return f"""🌦 Current Weather
+
+Temperature: {temp}°C
+Feels Like: {feels}°C
+Humidity: {humidity}%
+Wind Speed: {wind} km/h
+Condition: {desc}
+
+🌾 Advisory:
+{advisory}
+"""
+
+    except Exception as e:
+        return f"Weather Error: {str(e)}"
+# -----------------------------------------------------
+# MANDI API (Data.gov) - Cached
+# -----------------------------------------------------
+@lru_cache(maxsize=50)
+def fetch_state_records(state):
+    url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
+    params = {
+        "api-key": DATA_GOV_API_KEY,
+        "format": "json",
+        "limit": 500,
+        "filters[state]": state
+    }
+    try:
+        r = requests.get(url, params=params, timeout=15)
+        if r.status_code == 200:
+            return r.json().get("records", [])
+    except Exception as e:
+        print("API Error:", e)
+    return []
+
+@lru_cache(maxsize=200)
+def fetch_market_records(state, market):
+    url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
+    params = {
+        "api-key": DATA_GOV_API_KEY,
+        "format": "json",
+        "limit": 500,
+        "filters[state]": state,
+        "filters[market]": market
+    }
+    try:
+        r = requests.get(url, params=params, timeout=15)
+        if r.status_code == 200:
+            return r.json().get("records", [])
+    except Exception as e:
+        print("Market API Error:", e)
+    return []
+
+def detect_state(text):
+    for state in SUPPORTED_STATES:
+        if state.lower() in text.lower():
+            return state
+    return None
+
+def get_markets(records):
+    return sorted(set(r.get("market") for r in records if r.get("market")))
+
+def get_commodities(records):
+    return sorted(set(r.get("commodity") for r in records if r.get("commodity")))
+
+
+# -----------------------------------------------------
+# ROUTES
+# -----------------------------------------------------
+@app.route("/")
+def home():
+    return "Main Backend Running (Chat + Mandi + Weather + PIB)"
+
+@app.route("/reset", methods=["POST"])
+def reset():
+    user_ip = request.remote_addr
+    USER_CONTEXT[user_ip] = {"state": None, "market": None}
+    return jsonify({"text": "Context reset."})
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    question = request.form.get("text") or (request.json.get("text") if request.is_json else None)
+    if not question:
+        return jsonify({"text": "No query provided"}), 400
+
+    q = question.strip()
+    user_ip = request.remote_addr
+
+    if user_ip not in USER_CONTEXT:
+        USER_CONTEXT[user_ip] = {"state": None, "market": None}
+    context = USER_CONTEXT[user_ip]
+
+    # WEATHER
+    if ("weather" in q.lower()) or ("मौसम" in q) or ("mausam" in q.lower()):
+        lat = request.form.get("lat") or (request.json.get("lat") if request.is_json else None)
+        lon = request.form.get("lon") or (request.json.get("lon") if request.is_json else None)
+
+        if not lat or not lon:
+            return jsonify({"text": "Please allow location access to fetch weather."})
+
+        return jsonify({"text": get_weather(lat, lon)})
+
+    # STATE
+    state = detect_state(q)
+    if state:
+        context["state"] = state
+        context["market"] = None
+
+        records = fetch_state_records(state)
+        if not records:
+            return jsonify({"text": f"No mandi data found for {state}."})
+
+        markets = get_markets(records)
+        if not markets:
+            return jsonify({"text": f"No markets found for {state}."})
+
+        msg = f"Top markets in {state}:\n\n"
+        for i, m in enumerate(markets[:15], 1):
+            msg += f"{i}. {m}\n"
+        msg += "\nPlease type the market name."
+
+        return jsonify({"text": msg})
+
+    # MARKET
+    if context["state"]:
+        state = context["state"]
+        state_records = fetch_state_records(state)
+        markets = get_markets(state_records)
+
+        for market in markets:
+            if market.lower() in q.lower():
+                context["market"] = market
+                market_records = fetch_market_records(state, market)
+                commodities = get_commodities(market_records)
+
+                if not commodities:
+                    return jsonify({"text": f"No commodities found in {market}."})
+
+                msg = f"Available commodities in {market}:\n\n"
+                for c in commodities:
+                    msg += f"- {c}\n"
+                msg += "\nPlease type commodity name."
+
+                return jsonify({"text": msg})
+
+    # COMMODITY
+    if context["state"] and context["market"]:
+        state = context["state"]
+        market = context["market"]
+        market_records = fetch_market_records(state, market)
+
+        for r in market_records:
+            commodity = (r.get("commodity") or "").strip()
+            if commodity and commodity.lower() in q.lower():
+                return jsonify({
+                    "text": f"""Price breakdown for {commodity} in {market} ({state}):
+
+Minimum Price: ₹{r.get('min_price')}
+Maximum Price: ₹{r.get('max_price')}
+Modal Price: ₹{r.get('modal_price')}
+Arrival Date: {r.get('arrival_date')}
+"""
+                })
+
+    return jsonify({
+        "text": "Start with: Punjab mandi / Rajasthan mandi / Gujarat mandi OR type: weather OR open /pib-news"
+    })
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=True)

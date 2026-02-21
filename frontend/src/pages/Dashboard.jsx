@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, FileText, Scale, AlertCircle, Calendar, ArrowUpRight, ArrowDownRight, ShieldCheck } from 'lucide-react';
+import { TrendingUp, FileText, Scale, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import MandiPrices from '../components/dashboard/MandiPrices';
 import VoiceAssistant from '../components/dashboard/VoiceAssistant';
@@ -13,47 +13,25 @@ export default function Dashboard() {
     const [news, setNews] = useState([]);
 
     useEffect(() => {
-        // Fetch real-time news from backend
-        fetch('http://localhost:5001/news')
-            .then(res => res.json())
-            .then(data => setNews(data))
+        // ✅ PIB NEWS comes from OCR/PIB backend on 5000
+        fetch('http://localhost:5000/pib-news?count=10')
+            .then(async (res) => {
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`PIB API Error ${res.status}: ${text.slice(0, 80)}`);
+                }
+                return res.json();
+            })
+            .then((data) => {
+                // PIB backend returns { status, total, news: [] }
+                setNews(data.news || []);
+            })
             .catch(err => console.error("News Fetch Error:", err));
 
-        // Update name if changed in local storage
         const handleStorage = () => setUserName(localStorage.getItem('userName') || 'किसान भाई');
         window.addEventListener('storage', handleStorage);
         return () => window.removeEventListener('storage', handleStorage);
     }, []);
-
-    const stats = [
-        {
-            label: t('activeCases'),
-            value: '3',
-            change: '+1',
-            icon: Scale,
-            color: 'text-brand-blue',
-            bgColor: 'bg-brand-blue/10',
-            trend: 'up'
-        },
-        {
-            label: t('resolved'),
-            value: '12',
-            change: '+3',
-            icon: FileText,
-            color: 'text-brand-green',
-            bgColor: 'bg-brand-green/10',
-            trend: 'up'
-        },
-        {
-            label: t('mandiPrices'),
-            value: '₹2,850',
-            change: '+2.5%',
-            icon: TrendingUp,
-            color: 'text-brand-brown',
-            bgColor: 'bg-brand-brown/10',
-            trend: 'up'
-        },
-    ];
 
     const recentCases = [
         {
@@ -110,7 +88,6 @@ export default function Dashboard() {
                             </Link>
                         </div>
                     </div>
-                    {/* Decorative Background Elements */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
                 </div>
 
@@ -121,10 +98,19 @@ export default function Dashboard() {
                             <h2 className="text-3xl font-black text-brand-green dark:text-brand-tan">{t('newsFeed')}</h2>
                             <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">{t('livePIB')}</span>
                         </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {news.length > 0 ? news.map((item, i) => (
-                                <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="block glass p-6 rounded-[2rem] hover:scale-[1.03] transition-all group">
-                                    <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-brand-green dark:group-hover:text-brand-tan">{item.title}</h3>
+                                <a
+                                    key={i}
+                                    href={item.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block glass p-6 rounded-[2rem] hover:scale-[1.03] transition-all group"
+                                >
+                                    <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-brand-green dark:group-hover:text-brand-tan">
+                                        {item.title}
+                                    </h3>
                                     <span className="text-xs font-black text-brand-brown uppercase tracking-widest flex items-center gap-2">
                                         READ MORE <ArrowUpRight className="w-3 h-3" />
                                     </span>
@@ -133,11 +119,11 @@ export default function Dashboard() {
                                 <div key={i} className="glass p-6 rounded-[2rem] animate-pulse h-32 bg-neutral-200/20" />
                             ))}
                         </div>
+
                         <MandiPrices compact />
                     </div>
 
                     <div className="lg:col-span-4 space-y-10 animate-slide-up delay-200">
-                        {/* Right Column - Recent Activity */}
                         <Card variant="glass" className="h-full border-t-4 border-t-brand-green">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-2xl font-black text-brand-green dark:text-brand-tan">{t('activeCases')}</h2>
@@ -166,7 +152,6 @@ export default function Dashboard() {
                             </div>
                         </Card>
 
-                        {/* Notice Card */}
                         <div className="p-8 bg-brand-green text-white rounded-[2.5rem] shadow-xl relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="font-black text-xl mb-4 uppercase tracking-tighter">{t('safetyNotice')}</h3>
@@ -178,8 +163,8 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
             <VoiceAssistant />
         </div>
     );
 }
-
