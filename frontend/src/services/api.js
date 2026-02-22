@@ -67,3 +67,12 @@ export const getTopCommodities = async (state = "Punjab") => {
   const res = await CHATBOT_API.get(`/top-commodities?state=${state}`);
   return res.data;
 };
+
+export const chatWithWeather = async (lat, lon) => {
+  const res = await CHATBOT_API.post("/chat", {
+    text: "weather",
+    lat,
+    lon
+  });
+  return res.data;
+};
