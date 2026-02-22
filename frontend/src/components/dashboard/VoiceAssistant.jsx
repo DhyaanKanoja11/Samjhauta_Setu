@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { MessageSquare, Mic, X, Send } from "lucide-react";
-import { chatWithBot, chatWithBotAudio, chatWithWeather } from "../../services/api";
+import * as API from "../../services/api";
 
 export default function VoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,27 +19,43 @@ export default function VoiceAssistant() {
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  const scrollToBottom = () =>
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
   useEffect(() => scrollToBottom(), [messages, isOpen]);
 
   const addBotMessage = (text) => {
     setMessages((prev) => [
       ...prev,
-      { id: Date.now() + Math.random(), text, sender: "bot", timestamp: new Date() },
+      {
+        id: Date.now() + Math.random(),
+        text,
+        sender: "bot",
+        timestamp: new Date(),
+      },
     ]);
   };
 
   const addUserMessage = (text) => {
     setMessages((prev) => [
       ...prev,
-      { id: Date.now() + Math.random(), text, sender: "user", timestamp: new Date() },
+      {
+        id: Date.now() + Math.random(),
+        text,
+        sender: "user",
+        timestamp: new Date(),
+      },
     ]);
   };
 
   const isWeatherQuery = (text) => {
     const q = text.toLowerCase();
-    return q.includes("weather") || q.includes("mausam") || text.includes("मौसम");
+    return (
+      q.includes("weather") ||
+      q.includes("mausam") ||
+      text.includes("मौसम")
+    );
   };
 
   const handleSend = async (text = input) => {
@@ -54,6 +70,7 @@ export default function VoiceAssistant() {
       if (isWeatherQuery(text)) {
         if (!navigator.geolocation) {
           addBotMessage("Geolocation not supported in this browser.");
+          setIsLoading(false);
           return;
         }
 
@@ -63,8 +80,8 @@ export default function VoiceAssistant() {
               const lat = pos.coords.latitude;
               const lon = pos.coords.longitude;
 
-              const response = await chatWithWeather(text, lat, lon);
-              addBotMessage(response.text);
+              const response = await API.chatWithWeather(lat, lon);
+              addBotMessage(response?.text || "Weather data unavailable.");
             } catch (err) {
               console.error(err);
               addBotMessage("Weather fetch failed.");
@@ -73,7 +90,9 @@ export default function VoiceAssistant() {
             }
           },
           () => {
-            addBotMessage("Location permission denied. Please allow location to get weather.");
+            addBotMessage(
+              "Location permission denied. Please allow location access."
+            );
             setIsLoading(false);
           }
         );
@@ -81,32 +100,39 @@ export default function VoiceAssistant() {
         return;
       }
 
-      // NORMAL TEXT FLOW (MANDI)
-      const response = await chatWithBot(text);
-      addBotMessage(response.text);
+      // NORMAL TEXT FLOW
+      const response = await API.chatWithBot(text);
+      addBotMessage(response?.text || "No response received.");
     } catch (error) {
       console.error("Chat error:", error);
       addBotMessage("Something went wrong. Please try again.");
     } finally {
-      // For weather flow we return early and manage loading there.
       if (!isWeatherQuery(text)) setIsLoading(false);
     }
   };
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
-      mediaRecorderRef.current.ondataavailable = (e) => audioChunksRef.current.push(e.data);
+      mediaRecorderRef.current.ondataavailable = (e) =>
+        audioChunksRef.current.push(e.data);
 
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
+
         setIsLoading(true);
+
         try {
-          const response = await chatWithBotAudio(audioBlob);
-          addBotMessage(response.text);
+          const response = await API.chatWithBotAudio(audioBlob);
+          addBotMessage(response?.text || "Voice response unavailable.");
         } catch (err) {
           console.error(err);
           addBotMessage("Voice request failed.");
@@ -130,20 +156,28 @@ export default function VoiceAssistant() {
     }
   };
 
-  const quickQueries = ["Punjab mandi", "Rajasthan mandi", "Gujarat mandi", "weather"];
+  const quickQueries = [
+    "Punjab mandi",
+    "Rajasthan mandi",
+    "Gujarat mandi",
+    "weather",
+  ];
 
   return (
     <>
-      {/* Backdrop (mobile only) */}
+      {/* Mobile Backdrop */}
       {isOpen && (
-        <div onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/40 z-40 sm:hidden" />
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 sm:hidden"
+        />
       )}
 
       {/* Floating Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-16 h-16 bg-brand-green text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all z-50"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 w-16 h-16 bg-brand-green text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all z-50"
         >
           <Mic />
         </button>
@@ -151,14 +185,9 @@ export default function VoiceAssistant() {
 
       {/* Chat Panel */}
       <div
-        className={`
-          fixed top-0 right-0 h-full 
-          w-full sm:w-[480px]
-          bg-white dark:bg-neutral-900 
-          shadow-2xl z-50 
-          transition-transform duration-300
-          ${isOpen ? "translate-x-0" : "translate-x-full"}
-        `}
+        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white dark:bg-neutral-900 shadow-2xl z-50 transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         {/* Header */}
         <div className="bg-brand-green text-white p-4 flex justify-between items-center">
@@ -172,9 +201,14 @@ export default function VoiceAssistant() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 h-[calc(100%-150px)]">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 h-[calc(100%-170px)]">
           {messages.map((msg) => (
-            <div key={msg.id} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              key={msg.id}
+              className={`flex ${
+                msg.sender === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
               <div
                 className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm break-words whitespace-pre-wrap ${
                   msg.sender === "user"
@@ -187,7 +221,9 @@ export default function VoiceAssistant() {
             </div>
           ))}
 
-          {isLoading && <div className="text-xs text-neutral-500">Typing...</div>}
+          {isLoading && (
+            <div className="text-xs text-neutral-500">Typing...</div>
+          )}
 
           <div ref={messagesEndRef} />
         </div>
@@ -205,7 +241,7 @@ export default function VoiceAssistant() {
           ))}
         </div>
 
-        {/* Input */}
+        {/* Input Section */}
         <div className="p-4 border-t flex items-center gap-2">
           <button
             onMouseDown={startRecording}
@@ -213,7 +249,9 @@ export default function VoiceAssistant() {
             onTouchStart={startRecording}
             onTouchEnd={stopRecording}
             className={`w-12 h-12 rounded-full flex items-center justify-center ${
-              isRecording ? "bg-red-500 text-white" : "bg-neutral-200 dark:bg-neutral-800"
+              isRecording
+                ? "bg-red-500 text-white"
+                : "bg-neutral-200 dark:bg-neutral-800"
             }`}
             title="Hold to talk"
           >
