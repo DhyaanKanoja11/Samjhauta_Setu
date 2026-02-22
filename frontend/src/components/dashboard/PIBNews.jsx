@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getPIBNews } from "../../services/api";
 
 export default function PIBNews() {
   const [news, setNews] = useState([]);
@@ -6,26 +7,41 @@ export default function PIBNews() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL_OCR}/pib-news?count=10`)
-      .then(async (res) => {
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`PIB API Error ${res.status}: ${text.slice(0, 80)}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setNews(data.news || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Could not load PIB news.");
-        setLoading(false);
-      });
+    fetchNews();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-500 py-4">Loading news...</p>;
-  if (error) return <p className="text-center text-red-500 py-4">{error}</p>;
+  const fetchNews = async () => {
+    try {
+      const data = await getPIBNews(10);
+
+      if (data.status === "success") {
+        setNews(data.news || []);
+      } else {
+        setError("Could not load PIB news.");
+      }
+    } catch (err) {
+      console.error("News Fetch Error:", err);
+      setError("Could not load PIB news.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <p className="text-center text-gray-500 py-4">
+        Loading news...
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500 py-4">
+        {error}
+      </p>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow p-4">
@@ -35,7 +51,10 @@ export default function PIBNews() {
 
       <ul className="space-y-3">
         {news.map((item, index) => (
-          <li key={index} className="border-b pb-2 last:border-none">
+          <li
+            key={index}
+            className="border-b pb-2 last:border-none"
+          >
             <a
               href={item.link}
               target="_blank"
@@ -44,7 +63,10 @@ export default function PIBNews() {
             >
               {item.title}
             </a>
-            <p className="text-xs text-gray-400 mt-1">{item.published}</p>
+
+            <p className="text-xs text-gray-400 mt-1">
+              {item.published}
+            </p>
           </li>
         ))}
       </ul>
