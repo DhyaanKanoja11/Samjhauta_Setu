@@ -6,7 +6,7 @@ export default function PIBNews() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/pib-news?count=10")
+    fetch(`${import.meta.env.VITE_API_URL_OCR}/pib-news?count=10`)
       .then(async (res) => {
         if (!res.ok) {
           const text = await res.text();

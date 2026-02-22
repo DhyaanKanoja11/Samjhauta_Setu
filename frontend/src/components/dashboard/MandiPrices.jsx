@@ -21,7 +21,7 @@ export default function MandiPrices({ compact = false }) {
         setLoading(true);
 
         try {
-            const res = await fetch(`http://localhost:5001/top-commodities?state=${state}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL_CHATBOT}/top-commodities?state=${state}`);
             const data = await res.json();
 
             const formatted = (data.data || []).map((item, index) => ({
