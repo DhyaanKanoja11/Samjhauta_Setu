@@ -58,15 +58,11 @@
     @apply scroll-smooth;
   }
 
-  --color-primary: 61 140 64;
-  --color-secondary: 33 150 243;
-
   /* Surface Tokens (Standardized) */
   --surface-50: 255 255 255;
   --surface-100: 248 249 250;
   --surface-200: 233 236 239;
   --surface-300: 222 226 230;
-}
 
 .dark {
   --color-background: 15 17 12;
