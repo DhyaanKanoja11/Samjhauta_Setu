@@ -1,4 +1,4 @@
-import { Home, CloudSun, Newspaper, Wheat } from "lucide-react";
+import { Home, Wheat, FileText, Scale } from "lucide-react";
 
 export default function MobileBottomNav() {
   return (
@@ -14,14 +14,14 @@ export default function MobileBottomNav() {
         Mandi
       </a>
 
-      <a href="/weather" className="flex flex-col items-center text-xs tap-large">
-        <CloudSun size={20} />
-        Weather
+      <a href="/documents" className="flex flex-col items-center text-xs tap-large">
+        <FileText size={20} />
+        Scan
       </a>
 
-      <a href="/news" className="flex flex-col items-center text-xs tap-large">
-        <Newspaper size={20} />
-        News
+      <a href="/cases" className="flex flex-col items-center text-xs tap-large">
+        <Scale size={20} />
+        Disputes
       </a>
 
     </div>

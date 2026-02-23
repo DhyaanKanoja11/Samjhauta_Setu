@@ -10,23 +10,36 @@ export default function Navbar() {
     setDarkMode(!darkMode);
   };
 
+  const navLinks = [
+    { name: "Dashboard", path: "/" },
+    { name: "Mandi Prices", path: "/mandi" },
+    { name: "Document Scanner", path: "/documents" },
+    { name: "Manage Disputes", path: "/cases" },
+    { name: "Profile", path: "/profile" },
+  ];
+
   return (
     <>
       {/* TOP NAVBAR */}
       <nav className="navbar fixed top-0 left-0 right-0 z-50">
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
 
-          {/* LOGO */}
+          {/* Logo */}
           <div className="text-lg font-semibold text-green-700 dark:text-green-400">
             🌾 Samjhauta Setu
           </div>
 
-          {/* DESKTOP LINKS */}
+          {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <a href="/" className="hover:text-green-600">Home</a>
-            <a href="/mandi" className="hover:text-green-600">Mandi</a>
-            <a href="/weather" className="hover:text-green-600">Weather</a>
-            <a href="/news" className="hover:text-green-600">News</a>
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.path}
+                className="hover:text-green-600 transition-colors"
+              >
+                {link.name}
+              </a>
+            ))}
 
             <button
               onClick={toggleDark}
@@ -36,7 +49,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* MOBILE MENU BUTTON */}
+          {/* Mobile Menu Button */}
           <button
             className="md:hidden tap-large"
             onClick={() => setIsOpen(!isOpen)}
@@ -50,10 +63,15 @@ export default function Navbar() {
       {isOpen && (
         <div className="fixed top-16 left-0 right-0 bg-white dark:bg-neutral-900 shadow-md md:hidden z-40">
           <div className="flex flex-col p-4 gap-4 text-base font-medium">
-            <a href="/" onClick={() => setIsOpen(false)}>Home</a>
-            <a href="/mandi" onClick={() => setIsOpen(false)}>Mandi</a>
-            <a href="/weather" onClick={() => setIsOpen(false)}>Weather</a>
-            <a href="/news" onClick={() => setIsOpen(false)}>News</a>
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.path}
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </a>
+            ))}
 
             <button
               onClick={toggleDark}
