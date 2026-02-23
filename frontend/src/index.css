@@ -9,24 +9,24 @@
 ============================ */
 @layer base {
   :root {
-    --color-primary: 34 139 34;
-    --color-secondary: 0 102 204;
-    --color-accent: 204 85 0;
+    --color-primary:    34 139 34;
+    --color-secondary:  0 102 204;
+    --color-accent:     204 85 0;
 
     --color-background: 255 255 255;
-    --color-surface: 245 245 245;
+    --color-surface:    245 245 245;
 
-    --color-success: 34 139 34;
-    --color-warning: 255 152 0;
-    --color-error: 211 47 47;
-    --color-info: 0 102 204;
+    --color-success:    34 139 34;
+    --color-warning:    255 152 0;
+    --color-error:      211 47 47;
+    --color-info:       0 102 204;
   }
 
   .dark {
     --color-background: 18 18 18;
-    --color-surface: 28 28 28;
-    --color-primary: 56 199 89;
-    --color-secondary: 66 165 245;
+    --color-surface:    28 28 28;
+    --color-primary:    56 199 89;
+    --color-secondary:  66 165 245;
   }
 
   html {
@@ -42,12 +42,13 @@
     @apply text-neutral-100;
   }
 
-  h1 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold; }
-  h2 { @apply text-xl sm:text-2xl md:text-3xl font-semibold; }
-  h3 { @apply text-lg sm:text-xl md:text-2xl font-semibold; }
+  /* --- Headings --- */
+  h1 { @apply text-3xl sm:text-4xl md:text-5xl font-bold leading-tight; }
+  h2 { @apply text-2xl sm:text-3xl md:text-4xl font-semibold leading-snug; }
+  h3 { @apply text-xl  sm:text-2xl md:text-3xl font-semibold leading-snug; }
 
   p {
-    @apply text-neutral-800 leading-relaxed;
+    @apply text-base text-neutral-800 leading-relaxed;
   }
 
   .dark p {
@@ -60,21 +61,320 @@
 ============================ */
 @layer components {
 
+  /* --- Navbar --- */
+  .navbar {
+    @apply bg-white border-b border-neutral-200 flex items-center px-12;
+    height: 68px;
+  }
+
+  .dark .navbar {
+    @apply bg-neutral-900 border-neutral-800;
+  }
+
+  .nav-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+    gap: 32px;
+  }
+
+  /* --- Dashboard --- */
+  .dashboard-wrapper {
+    padding-top: 32px;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  /* --- Hero Banner --- */
+  .hero-banner {
+    padding: 40px 48px;
+    border-radius: 16px;
+    min-height: 160px;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .hero-date {
+    font-size: 0.95rem;
+    margin-top: 10px;
+    opacity: 0.85;
+  }
+
+  /* --- Section Headings --- */
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding-left: 8px;
+    margin-bottom: 20px;
+  }
+
+  /* --- News Cards --- */
+  .news-card {
+    height: 200px;
+    border-radius: 12px;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  /* --- Active Cases --- */
+  .case-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .case-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+  }
+
+  .case-timestamp {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  /* --- Case List Rows (Manage Disputes) --- */
+  .case-row {
+    padding: 24px 16px;
+    gap: 16px;
+  }
+
+  .case-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .case-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .case-meta-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .case-meta-value {
+    font-size: 14px;
+  }
+
+  /* --- Filter Tabs --- */
+  .filter-tab {
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  /* --- Document / Legal Paper Checker --- */
+  .page-header {
+    padding: 40px 48px 24px;
+  }
+
+  .page-title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  .upload-btn {
+    height: 48px;
+    padding: 0 28px;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    border-radius: 10px;
+  }
+
+  .doc-category-row {
+    padding: 18px 16px;
+    font-size: 15px;
+  }
+
+  .doc-category-count {
+    font-size: 13px;
+    opacity: 0.6;
+  }
+
+  .dropzone {
+    min-height: 200px;
+    border-radius: 12px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropzone-icon {
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  .dropzone-text {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .dropzone-hint {
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.55;
+  }
+
+  .risk-panel {
+    padding: 32px 24px;
+  }
+
+  .risk-placeholder-text {
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+    max-width: 260px;
+    margin: 0 auto;
+    opacity: 0.65;
+  }
+
+  /* --- Profile --- */
+  .profile-header {
+    padding: 32px 48px 0;
+  }
+
+  .profile-title {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .profile-subtitle {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  .avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .avatar-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 12px;
+  }
+
+  .avatar-location {
+    font-size: 13px;
+    margin-top: 4px;
+    opacity: 0.65;
+  }
+
+  .edit-profile-btn {
+    height: 48px;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    border-radius: 10px;
+  }
+
+  .settings-row {
+    padding: 18px 16px;
+    font-size: 15px;
+  }
+
+  .form-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+
+  .form-value {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+
+  .scheme-card {
+    padding: 18px 16px;
+    border-radius: 10px;
+  }
+
+  .scheme-name {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .scheme-status {
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  /* --- Skeleton / Loading Cards --- */
+  .skeleton-card {
+    height: 180px;
+    border-radius: 12px;
+    margin-top: 24px;
+  }
+
+  /* --- FAB Mic Button --- */
+  .fab-mic {
+    width: 58px;
+    height: 58px;
+    bottom: 28px;
+    right: 28px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* --- Shared Card --- */
   .card {
-    @apply bg-white rounded-lg shadow-sm p-4 sm:p-6 transition-all duration-200;
+    @apply bg-white rounded-xl shadow-sm p-5 sm:p-6 transition-all duration-200;
   }
 
   .dark .card {
     @apply bg-neutral-900;
   }
 
+  /* --- Buttons --- */
   .tap-large {
     min-height: 48px;
     min-width: 48px;
   }
 
   .btn {
-    @apply px-5 py-3 rounded-md font-medium transition-all duration-200 tap-large;
+    @apply px-6 py-3 rounded-lg font-medium transition-all duration-200 tap-large;
+    font-size: 15px;
   }
 
   .btn-primary {
@@ -87,24 +387,21 @@
     color: white;
   }
 
+  /* --- Input --- */
   .input {
-    @apply w-full px-4 py-3 rounded-md border border-neutral-300 tap-large;
+    @apply w-full px-4 py-3 rounded-lg border border-neutral-300 tap-large;
+    font-size: 16px;
   }
 
   .dark .input {
     @apply bg-neutral-800 border-neutral-700 text-white;
   }
 
-  .navbar {
-    @apply bg-white border-b border-neutral-200 h-16 flex items-center px-4;
-  }
-
-  .dark .navbar {
-    @apply bg-neutral-900 border-neutral-800;
-  }
-
+  /* --- Mobile Bottom Nav --- */
   .mobile-bottom-nav {
-    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 flex justify-around items-center h-16 sm:hidden z-50;
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200
+           flex justify-around items-center sm:hidden z-50;
+    height: 64px;
   }
 
   .dark .mobile-bottom-nav {
@@ -132,5 +429,150 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* ============================
+   RESPONSIVE — MOBILE
+============================ */
+@media (max-width: 768px) {
+
+  /* Navbar */
+  nav {
+    padding: 0 20px;
+    height: 60px;
+  }
+
+  /* Page wrappers */
+  .dashboard-wrapper,
+  .page-header,
+  .profile-header {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .dashboard-wrapper {
+    padding-top: 20px;
+  }
+
+  .page-header {
+    padding-top: 24px;
+    padding-bottom: 16px;
+  }
+
+  .profile-header {
+    padding-top: 24px;
+  }
+
+  /* Hero banner */
+  .hero-banner {
+    padding: 28px 20px;
+    border-radius: 12px;
+    min-height: 130px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-date {
+    font-size: 0.85rem;
+  }
+
+  /* Page titles */
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .profile-title {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+  }
+
+  /* News cards */
+  .news-card {
+    height: 160px;
+    padding: 14px;
+  }
+
+  /* Case rows */
+  .case-row {
+    padding: 16px 12px;
+    flex-wrap: wrap;
+  }
+
+  .case-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .case-name {
+    font-size: 1rem;
+  }
+
+  /* Filter tabs */
+  .filter-tab {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  /* Dropzone */
+  .dropzone {
+    min-height: 160px;
+  }
+
+  .dropzone-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dropzone-text {
+    font-size: 13px;
+  }
+
+  /* Doc category rows */
+  .doc-category-row {
+    padding: 14px 12px;
+    font-size: 14px;
+  }
+
+  /* Risk panel */
+  .risk-panel {
+    padding: 20px 16px;
+  }
+
+  /* Profile */
+  .avatar-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar-name {
+    font-size: 1.05rem;
+  }
+
+  .settings-row {
+    padding: 14px 12px;
+    font-size: 14px;
+  }
+
+  .scheme-card {
+    padding: 14px 12px;
+  }
+
+  /* Skeleton cards */
+  .skeleton-card {
+    height: 140px;
+  }
+
+  /* FAB */
+  .fab-mic {
+    width: 52px;
+    height: 52px;
+    bottom: 20px;
+    right: 16px;
   }
 }

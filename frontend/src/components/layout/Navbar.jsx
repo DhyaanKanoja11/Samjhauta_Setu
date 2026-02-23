@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,76 +11,41 @@ export default function Navbar() {
     setDarkMode(!darkMode);
   };
 
-  const navLinks = [
-    { name: "Dashboard", path: "/" },
-    { name: "Mandi Prices", path: "/mandi" },
-    { name: "Document Scanner", path: "/documents" },
-    { name: "Manage Disputes", path: "/cases" },
-    { name: "Profile", path: "/profile" },
-  ];
-
   return (
     <>
-      {/* TOP NAVBAR */}
-      <nav className="navbar fixed top-0 left-0 right-0 z-50">
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+      <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 z-50">
+        <div className="h-[68px] px-12 flex items-center justify-between max-w-7xl mx-auto">
 
-          {/* Logo */}
-          <div className="text-lg font-semibold text-green-700 dark:text-green-400">
+          <div className="text-xl font-bold text-green-700 dark:text-green-400">
             🌾 Samjhauta Setu
           </div>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.path}
-                className="hover:text-green-600 transition-colors"
-              >
-                {link.name}
-              </a>
-            ))}
+          <div className="hidden md:flex items-center gap-8 text-[15px] font-medium">
 
-            <button
-              onClick={toggleDark}
-              className="tap-large flex items-center justify-center"
-            >
+            <Link to="/">Dashboard</Link>
+            <Link to="/mandi">Mandi Prices</Link>
+            <Link to="/documents">Document Scanner</Link>
+            <Link to="/cases">Manage Disputes</Link>
+            <Link to="/profile">Profile</Link>
+
+            <button onClick={toggleDark}>
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden tap-large"
-            onClick={() => setIsOpen(!isOpen)}
-          >
+          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X /> : <Menu />}
           </button>
         </div>
       </nav>
 
-      {/* MOBILE DRAWER */}
       {isOpen && (
-        <div className="fixed top-16 left-0 right-0 bg-white dark:bg-neutral-900 shadow-md md:hidden z-40">
-          <div className="flex flex-col p-4 gap-4 text-base font-medium">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.path}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </a>
-            ))}
-
-            <button
-              onClick={toggleDark}
-              className="flex items-center gap-2"
-            >
-              {darkMode ? "Light Mode" : "Dark Mode"}
-            </button>
-          </div>
+        <div className="fixed top-[68px] left-0 right-0 bg-white dark:bg-neutral-900 shadow-md md:hidden z-40 p-6 space-y-4">
+          <Link to="/">Dashboard</Link>
+          <Link to="/mandi">Mandi Prices</Link>
+          <Link to="/documents">Document Scanner</Link>
+          <Link to="/cases">Manage Disputes</Link>
+          <Link to="/profile">Profile</Link>
         </div>
       )}
     </>
