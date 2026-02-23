@@ -174,19 +174,33 @@ Wind Speed: {wind} km/h
 @lru_cache(maxsize=50)
 def fetch_state_records(state):
     url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
+
     params = {
         "api-key": DATA_GOV_API_KEY,
         "format": "json",
-        "limit": 500,
-        "filters[state]": state
+        "limit": 1000  # bigger fetch
     }
+
     try:
-        r = requests.get(url, params=params, timeout=15)
-        if r.status_code == 200:
-            return r.json().get("records", [])
+        r = requests.get(url, params=params, timeout=20)
+
+        if r.status_code != 200:
+            print("Data.gov HTTP Error:", r.status_code)
+            return []
+
+        all_records = r.json().get("records", [])
+
+        # 🔥 Filter locally instead of API filter
+        filtered = [
+            rec for rec in all_records
+            if rec.get("state", "").lower() == state.lower()
+        ]
+
+        return filtered
+
     except Exception as e:
         print("API Error:", e)
-    return []
+        return []
 
 @lru_cache(maxsize=200)
 def fetch_market_records(state, market):
