@@ -2,34 +2,22 @@ import axios from "axios";
 
 /*
   Vercel Environment Variables:
-  VITE_API_URL_CHATBOT
-  VITE_API_URL_OCR
+  VITE_API_URL_CHATBOT = https://samjhauta-setu-1.onrender.com
+  VITE_API_URL_OCR     = https://samjhauta-setu.onrender.com
 */
 
-const BASE_URL_CHATBOT =
-  import.meta.env.VITE_API_URL_CHATBOT ||
-  (import.meta.env.DEV ? "http://localhost:5001" : "");
+const BASE_URL_CHATBOT = (import.meta.env.VITE_API_URL_CHATBOT || "").replace(/\/$/, "");
+const BASE_URL_OCR = (import.meta.env.VITE_API_URL_OCR || "").replace(/\/$/, "");
 
-const BASE_URL_OCR =
-  import.meta.env.VITE_API_URL_OCR ||
-  (import.meta.env.DEV ? "http://localhost:5000" : "");
-
-// 🚨 Hard fail if missing in production
-if (!import.meta.env.DEV) {
-  if (!BASE_URL_CHATBOT || !BASE_URL_OCR) {
-    console.error(
-      "❌ Missing API environment variables in production build."
-    );
-  }
-}
+if (!BASE_URL_CHATBOT) console.warn("⚠️ Missing VITE_API_URL_CHATBOT");
+if (!BASE_URL_OCR) console.warn("⚠️ Missing VITE_API_URL_OCR");
 
 // ==============================
 // Axios Instances
 // ==============================
-
 const CHATBOT_API = axios.create({
   baseURL: BASE_URL_CHATBOT,
-  timeout: 20000,
+  timeout: 25000,
 });
 
 const OCR_API = axios.create({
@@ -37,10 +25,13 @@ const OCR_API = axios.create({
   timeout: 30000,
 });
 
+// Optional: simple response logging in dev
+// CHATBOT_API.interceptors.response.use(r => r, e => Promise.reject(e));
+// OCR_API.interceptors.response.use(r => r, e => Promise.reject(e));
+
 // ==============================
 // OCR / Document APIs
 // ==============================
-
 export const scanDocument = async (file, lang = "hi") => {
   const formData = new FormData();
   formData.append("file", file);
@@ -61,7 +52,6 @@ export const analyzeText = async (text, lang = "hi") => {
 // ==============================
 // Chatbot APIs
 // ==============================
-
 export const chatWithBot = async (text) => {
   const res = await CHATBOT_API.post("/chat", { text });
   return res.data;
@@ -88,21 +78,18 @@ export const chatWithWeather = async (lat, lon) => {
 };
 
 // ==============================
-// PIB News
+// PIB News  ✅ IMPORTANT FIX
+// Your /pib-news route is in CHATBOT backend in your app.py
 // ==============================
-
 export const getPIBNews = async (count = 10) => {
-  const res = await OCR_API.get(`/pib-news?count=${count}`);
+  const res = await CHATBOT_API.get(`/pib-news?count=${count}`);
   return res.data;
 };
 
 // ==============================
 // Mandi Top Commodities
 // ==============================
-
 export const getTopCommodities = async (state = "Punjab") => {
-  const res = await CHATBOT_API.get(
-    `/top-commodities?state=${state}`
-  );
+  const res = await CHATBOT_API.get(`/top-commodities?state=${encodeURIComponent(state)}`);
   return res.data;
 };

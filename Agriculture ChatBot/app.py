@@ -133,45 +133,39 @@ def top_commodities():
 # -----------------------------------------------------
 def get_weather(lat, lon):
     try:
-        # wttr supports lat,lon format
-        url = f"https://wttr.in/{lat},{lon}?format=j1"
+        url = f"https://api.open-meteo.com/v1/forecast"
+        params = {
+            "latitude": lat,
+            "longitude": lon,
+            "current_weather": True
+        }
 
-        r = requests.get(url, timeout=10)
+        r = requests.get(url, params=params, timeout=10)
 
         if r.status_code != 200:
-            return f"Weather Error (HTTP {r.status_code})"
+            return "Weather service unavailable."
 
         data = r.json()
+        current = data.get("current_weather", {})
 
-        current = data["current_condition"][0]
+        temp = current.get("temperature")
+        wind = current.get("windspeed")
 
-        temp = current["temp_C"]
-        humidity = current["humidity"]
-        wind = current["windspeedKmph"]
-        feels = current["FeelsLikeC"]
-        desc = current["weatherDesc"][0]["value"]
-
-        # Simple farming advisory logic
         advisory = "Normal farming conditions."
-        if int(temp) >= 35:
-            advisory = "High temperature. Increase irrigation and avoid pesticide spraying in afternoon."
-        elif int(wind) >= 25:
+        if temp and temp >= 35:
+            advisory = "High temperature. Increase irrigation."
+        elif wind and wind >= 25:
             advisory = "High wind speed. Avoid spraying chemicals."
-        elif "rain" in desc.lower():
-            advisory = "Rain expected. Avoid irrigation and protect stored crops."
 
-        return f"""🌦 Current Weather
+        return f"""
+🌦 Current Weather
 
 Temperature: {temp}°C
-Feels Like: {feels}°C
-Humidity: {humidity}%
 Wind Speed: {wind} km/h
-Condition: {desc}
 
 🌾 Advisory:
 {advisory}
 """
-
     except Exception as e:
         return f"Weather Error: {str(e)}"
 # -----------------------------------------------------
@@ -330,4 +324,4 @@ Arrival Date: {r.get('arrival_date')}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port)
