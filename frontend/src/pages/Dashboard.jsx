@@ -7,7 +7,7 @@ import MandiPrices from '../components/dashboard/MandiPrices';
 import VoiceAssistant from '../components/dashboard/VoiceAssistant';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
-import { getPIBNews } from '../services/api';
+import { getPIBNews, warmUp } from '../services/api';
 
 export default function Dashboard() {
   const { t } = useTranslation();
