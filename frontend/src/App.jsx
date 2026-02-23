@@ -8,7 +8,22 @@ import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
 // Note: SignupPage is removed since OTP handles both login and registration
 import Navbar from './components/common/Navbar';
+import Navbar from "./components/layout/Navbar";
+import MobileBottomNav from "./components/layout/MobileBottomNav";
 
+function App() {
+  return (
+    <>
+      <Navbar />
+
+      <div className="pt-16 pb-20">
+        {/* Your Routes Here */}
+      </div>
+
+      <MobileBottomNav />
+    </>
+  );
+}
 // 1. The Route Bouncer (Your existing logic, kept perfectly intact)
 function PrivateRoute({ children }) {
   const auth = localStorage.getItem('isAuthenticated');
