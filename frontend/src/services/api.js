@@ -2,32 +2,40 @@ import axios from "axios";
 
 /*
   Vercel Environment Variables:
-  VITE_API_URL_CHATBOT = https://samjhauta-setu-1.onrender.com
-  VITE_API_URL_OCR     = https://samjhauta-setu.onrender.com
+  VITE_API_URL_CHATBOT
+  VITE_API_URL_OCR
 */
 
-const BASE_URL_CHATBOT = (import.meta.env.VITE_API_URL_CHATBOT || "").replace(/\/$/, "");
-const BASE_URL_OCR = (import.meta.env.VITE_API_URL_OCR || "").replace(/\/$/, "");
+const BASE_URL_CHATBOT = import.meta.env.VITE_API_URL_CHATBOT;
+const BASE_URL_OCR = import.meta.env.VITE_API_URL_OCR;
 
-if (!BASE_URL_CHATBOT) console.warn("⚠️ Missing VITE_API_URL_CHATBOT");
-if (!BASE_URL_OCR) console.warn("⚠️ Missing VITE_API_URL_OCR");
+// Normalize: remove trailing slash (avoids //route issues)
+const normalize = (url) => (url ? url.replace(/\/+$/, "") : "");
 
-// ==============================
-// Axios Instances
-// ==============================
 const CHATBOT_API = axios.create({
-  baseURL: BASE_URL_CHATBOT,
-  timeout: 25000,
+  baseURL: normalize(BASE_URL_CHATBOT),
+  timeout: 60000, // ✅ 60s for Render cold starts
 });
 
 const OCR_API = axios.create({
-  baseURL: BASE_URL_OCR,
-  timeout: 30000,
+  baseURL: normalize(BASE_URL_OCR),
+  timeout: 60000, // ✅ 60s for Render cold starts
 });
 
-// Optional: simple response logging in dev
-// CHATBOT_API.interceptors.response.use(r => r, e => Promise.reject(e));
-// OCR_API.interceptors.response.use(r => r, e => Promise.reject(e));
+// -----------------------------
+// Warm-up (Render sleep fix)
+// -----------------------------
+export const warmUp = async () => {
+  const results = await Promise.allSettled([
+    CHATBOT_API.get("/"),
+    OCR_API.get("/"),
+  ]);
+
+  return {
+    chatbot: results[0].status,
+    ocr: results[1].status,
+  };
+};
 
 // ==============================
 // OCR / Document APIs
@@ -78,8 +86,8 @@ export const chatWithWeather = async (lat, lon) => {
 };
 
 // ==============================
-// PIB News  ✅ IMPORTANT FIX
-// Your /pib-news route is in CHATBOT backend in your app.py
+// PIB News
+// IMPORTANT: Your /pib-news is in app.py (chatbot backend)
 // ==============================
 export const getPIBNews = async (count = 10) => {
   const res = await CHATBOT_API.get(`/pib-news?count=${count}`);
@@ -87,9 +95,9 @@ export const getPIBNews = async (count = 10) => {
 };
 
 // ==============================
-// Mandi Top Commodities
+// Mandi
 // ==============================
 export const getTopCommodities = async (state = "Punjab") => {
-  const res = await CHATBOT_API.get(`/top-commodities?state=${encodeURIComponent(state)}`);
+  const res = await CHATBOT_API.get(`/top-commodities?state=${state}`);
   return res.data;
 };
