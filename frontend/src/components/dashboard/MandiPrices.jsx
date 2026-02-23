@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import { Search, TrendingUp, MapPin, LayoutGrid, List } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PriceCard from '../common/PriceCard';
 import Button from '../common/Button';
+import { getTopCommodities } from '../../services/api';
 
 export default function MandiPrices({ compact = false }) {
     const { t } = useTranslation();
@@ -21,8 +21,7 @@ export default function MandiPrices({ compact = false }) {
         setLoading(true);
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL_CHATBOT}/top-commodities?state=${state}`);
-            const data = await res.json();
+            const data = await getTopCommodities(state);
 
             const formatted = (data.data || []).map((item, index) => ({
                 id: index + 1,
@@ -36,6 +35,7 @@ export default function MandiPrices({ compact = false }) {
             setPrices(formatted);
         } catch (err) {
             console.error("Mandi fetch error:", err);
+            setPrices([]);
         }
 
         setLoading(false);
@@ -49,9 +49,9 @@ export default function MandiPrices({ compact = false }) {
 
     if (loading) {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[1, 2, 3].map(i => (
-                    <div key={i} className="animate-pulse bg-brand-cream/20 h-48 rounded-[2rem]" />
+                    <div key={i} className="animate-pulse bg-neutral-200/30 h-48 rounded-3xl" />
                 ))}
             </div>
         );
@@ -59,6 +59,7 @@ export default function MandiPrices({ compact = false }) {
 
     return (
         <div className="space-y-8">
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div>
