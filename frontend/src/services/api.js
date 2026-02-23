@@ -6,8 +6,22 @@ import axios from "axios";
   VITE_API_URL_OCR
 */
 
-const BASE_URL_CHATBOT = import.meta.env.VITE_API_URL_CHATBOT;
-const BASE_URL_OCR = import.meta.env.VITE_API_URL_OCR;
+const BASE_URL_CHATBOT =
+  import.meta.env.VITE_API_URL_CHATBOT ||
+  (import.meta.env.DEV ? "http://localhost:5001" : "");
+
+const BASE_URL_OCR =
+  import.meta.env.VITE_API_URL_OCR ||
+  (import.meta.env.DEV ? "http://localhost:5000" : "");
+
+// 🚨 Hard fail if missing in production
+if (!import.meta.env.DEV) {
+  if (!BASE_URL_CHATBOT || !BASE_URL_OCR) {
+    console.error(
+      "❌ Missing API environment variables in production build."
+    );
+  }
+}
 
 // ==============================
 // Axios Instances
@@ -87,6 +101,8 @@ export const getPIBNews = async (count = 10) => {
 // ==============================
 
 export const getTopCommodities = async (state = "Punjab") => {
-  const res = await CHATBOT_API.get(`/top-commodities?state=${state}`);
+  const res = await CHATBOT_API.get(
+    `/top-commodities?state=${state}`
+  );
   return res.data;
 };
