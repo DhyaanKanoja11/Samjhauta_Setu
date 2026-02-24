@@ -27,45 +27,28 @@ USER_CONTEXT = {}
 # -----------------------------------------------------
 # PIB NEWS (Scrape + RSS fallback)
 # -----------------------------------------------------
+# -----------------------------------------------------
+# PIB NEWS (Google RSS first → PIB scrape fallback)
+# -----------------------------------------------------
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Referer": "https://www.pib.gov.in/",
+    "User-Agent": "Mozilla/5.0",
+    "Accept": "application/xml,text/html",
+    "Accept-Language": "en-US,en;q=0.9",
 }
 
 @app.route("/pib-news", methods=["GET"])
 def pib_news():
     count = int(request.args.get("count", 10))
+    news_list = []
 
+    # ------------------------------
+    # 1️⃣ Google News RSS (Primary - Most Stable)
+    # ------------------------------
     try:
-        url = "https://pib.gov.in/allRel.aspx"
-        response = requests.get(url, headers=HEADERS, timeout=15)
-        response.raise_for_status()
+        rss_url = "https://news.google.com/rss/search?q=Department+Agriculture+Farmers+Welfare+India+government&hl=en-IN&gl=IN&ceid=IN:en"
+        rss_response = requests.get(rss_url, headers=HEADERS, timeout=10)
 
-        soup = BeautifulSoup(response.text, "html.parser")
-        news_list = []
-
-        # Primary scrape selectors (same as your code)
-        for item in soup.select("ul.release-list li, div.release-detail, .all-release li")[:count]:
-            title_tag = item.find("a")
-            if title_tag:
-                title = title_tag.get_text(strip=True)
-                link = title_tag.get("href", "")
-
-                if link and not link.startswith("http"):
-                    link = "https://pib.gov.in/" + link.lstrip("/")
-
-                date_tag = item.find("span") or item.find("p")
-                date = date_tag.get_text(strip=True) if date_tag else datetime.now().strftime("%d %b %Y")
-
-                if title:
-                    news_list.append({"title": title, "link": link, "published": date})
-
-        # Fallback RSS
-        if not news_list:
-            rss_url = "https://news.google.com/rss/search?q=site:pib.gov.in&hl=en-IN&gl=IN&ceid=IN:en"
-            rss_response = requests.get(rss_url, headers=HEADERS, timeout=10)
+        if rss_response.status_code == 200:
             root = ET.fromstring(rss_response.content)
 
             for item in root.findall(".//item")[:count]:
@@ -74,16 +57,71 @@ def pib_news():
                 pub_date = item.findtext("pubDate", datetime.now().strftime("%a, %d %b %Y"))
 
                 if title:
-                    news_list.append({"title": title, "link": link, "published": pub_date})
+                    news_list.append({
+                        "title": title,
+                        "link": link,
+                        "published": pub_date
+                    })
 
-        if not news_list:
-            return jsonify({"error": "Could not fetch PIB news"}), 503
-
-        return jsonify({"status": "success", "total": len(news_list), "news": news_list})
+        # If RSS worked, return immediately
+        if news_list:
+            return jsonify({
+                "status": "success",
+                "source": "google-rss",
+                "total": len(news_list),
+                "news": news_list
+            })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("Google RSS error:", e)
 
+    # ------------------------------
+    # 2️⃣ PIB Website Scrape (Fallback)
+    # ------------------------------
+    try:
+        url = "https://pib.gov.in/allRel.aspx"
+        response = requests.get(url, headers=HEADERS, timeout=15)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            for item in soup.select("ul.release-list li, .all-release li")[:count]:
+                title_tag = item.find("a")
+                if not title_tag:
+                    continue
+
+                title = title_tag.get_text(strip=True)
+                link = title_tag.get("href", "")
+
+                if link and not link.startswith("http"):
+                    link = "https://pib.gov.in/" + link.lstrip("/")
+
+                if title:
+                    news_list.append({
+                        "title": title,
+                        "link": link,
+                        "published": datetime.now().strftime("%d %b %Y")
+                    })
+
+        if news_list:
+            return jsonify({
+                "status": "success",
+                "source": "pib-scrape",
+                "total": len(news_list),
+                "news": news_list
+            })
+
+    except Exception as e:
+        print("PIB scrape error:", e)
+
+    # ------------------------------
+    # 3️⃣ Final fallback
+    # ------------------------------
+    return jsonify({
+        "status": "error",
+        "message": "Could not fetch agriculture news at this time.",
+        "news": []
+    }), 503
 @app.route("/top-commodities", methods=["GET"])
 def top_commodities():
     state = request.args.get("state", "Punjab")
