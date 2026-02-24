@@ -6,35 +6,47 @@ import axios from "axios";
   VITE_API_URL_OCR
 */
 
-const BASE_URL_CHATBOT = import.meta.env.VITE_API_URL_CHATBOT;
-const BASE_URL_OCR = import.meta.env.VITE_API_URL_OCR;
-
-// Normalize: remove trailing slash (avoids //route issues)
+// -----------------------------
+// Base URLs
+// -----------------------------
 const normalize = (url) => (url ? url.replace(/\/+$/, "") : "");
 
+const BASE_URL_CHATBOT = normalize(import.meta.env.VITE_API_URL_CHATBOT);
+const BASE_URL_OCR = normalize(import.meta.env.VITE_API_URL_OCR);
+
+// Safety check (helps debugging in production)
+if (!BASE_URL_CHATBOT) {
+  console.error("❌ VITE_API_URL_CHATBOT is not defined");
+}
+if (!BASE_URL_OCR) {
+  console.error("❌ VITE_API_URL_OCR is not defined");
+}
+
+// -----------------------------
+// Axios Instances
+// -----------------------------
 const CHATBOT_API = axios.create({
-  baseURL: normalize(BASE_URL_CHATBOT),
-  timeout: 60000, // ✅ 60s for Render cold starts
+  baseURL: BASE_URL_CHATBOT,
+  timeout: 60000, // 60s for Render cold starts
 });
 
 const OCR_API = axios.create({
-  baseURL: normalize(BASE_URL_OCR),
-  timeout: 60000, // ✅ 60s for Render cold starts
+  baseURL: BASE_URL_OCR,
+  timeout: 60000,
 });
 
 // -----------------------------
 // Warm-up (Render sleep fix)
 // -----------------------------
 export const warmUp = async () => {
-  const results = await Promise.allSettled([
-    CHATBOT_API.get("/"),
-    OCR_API.get("/"),
-  ]);
-
-  return {
-    chatbot: results[0].status,
-    ocr: results[1].status,
-  };
+  try {
+    await Promise.allSettled([
+      CHATBOT_API.get("/"),
+      OCR_API.get("/"),
+    ]);
+  } catch {
+    // silent fail — warmup should never crash UI
+  }
 };
 
 // ==============================
@@ -87,17 +99,21 @@ export const chatWithWeather = async (lat, lon) => {
 
 // ==============================
 // PIB News
-// IMPORTANT: Your /pib-news is in app.py (chatbot backend)
 // ==============================
 export const getPIBNews = async (count = 10) => {
-  const res = await CHATBOT_API.get(`/pib-news?count=${count}`);
+  const res = await CHATBOT_API.get("/pib-news", {
+    params: { count },
+  });
   return res.data;
 };
 
 // ==============================
-// Mandi
+// Mandi (Important Fix Here)
 // ==============================
 export const getTopCommodities = async (state = "Punjab") => {
-  const res = await CHATBOT_API.get(`/top-commodities?state=${state}`);
+  const res = await CHATBOT_API.get("/top-commodities", {
+    params: { state },   // ✅ safer than string interpolation
+  });
+
   return res.data;
 };

@@ -20,7 +20,6 @@ export default function Dashboard() {
     const init = async () => {
       try {
         // ✅ Wake servers first
-        await warmUp();
 
         // ✅ Then fetch news
         const data = await getPIBNews(10);
@@ -147,16 +146,3 @@ export default function Dashboard() {
 }
 
 
-export default function MandiPage() {
-  return (
-    <div className="min-h-screen bg-brand-cream/10 dark:bg-[#0F110C] transition-colors duration-300">
-      
-      <div className="container-custom py-8 md:py-12 space-y-10">
-
-        <MandiPrices compact={false} />
-
-      </div>
-
-    </div>
-  );
-}
