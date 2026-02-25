@@ -287,6 +287,8 @@ def reset():
 @app.route("/chat", methods=["POST"])
 def chat():
     question = request.form.get("text") or (request.json.get("text") if request.is_json else None)
+    lang = request.form.get("lang") or (request.json.get("lang") if request.is_json else "hi")
+
     if not question:
         return jsonify({"text": "No query provided"}), 400
 
@@ -297,17 +299,28 @@ def chat():
         USER_CONTEXT[user_ip] = {"state": None, "market": None}
     context = USER_CONTEXT[user_ip]
 
-    # WEATHER
-    if ("weather" in q.lower()) or ("मौसम" in q) or ("mausam" in q.lower()):
+    # -----------------------------
+    # 🌦 WEATHER
+    # -----------------------------
+    if ("weather" in q.lower()) or ("मौसम" in q) or ("mausam" in q.lower()) or ("હવામાન" in q):
         lat = request.form.get("lat") or (request.json.get("lat") if request.is_json else None)
         lon = request.form.get("lon") or (request.json.get("lon") if request.is_json else None)
 
         if not lat or not lon:
-            return jsonify({"text": "Please allow location access to fetch weather."})
+            msg = {
+                "en": "Please allow location access to fetch weather.",
+                "hi": "मौसम जानने के लिए कृपया लोकेशन की अनुमति दें।",
+                "gu": "હવામાન જાણવા માટે કૃપા કરીને લોકેશન પરવાનગી આપો."
+            }
+            return jsonify({"text": msg.get(lang, msg["hi"])})
 
-        return jsonify({"text": get_weather(lat, lon)})
+        weather_text = get_weather(lat, lon)
 
-    # STATE
+        return jsonify({"text": weather_text})
+
+    # -----------------------------
+    # 🏛 STATE DETECTION
+    # -----------------------------
     state = detect_state(q)
     if state:
         context["state"] = state
@@ -321,14 +334,28 @@ def chat():
         if not markets:
             return jsonify({"text": f"No markets found for {state}."})
 
-        msg = f"Top markets in {state}:\n\n"
+        if lang == "gu":
+            msg = f"{state} માં ટોચની મંડીઓ:\n\n"
+        elif lang == "en":
+            msg = f"Top markets in {state}:\n\n"
+        else:
+            msg = f"{state} में प्रमुख मंडियां:\n\n"
+
         for i, m in enumerate(markets[:15], 1):
             msg += f"{i}. {m}\n"
-        msg += "\nPlease type the market name."
+
+        if lang == "gu":
+            msg += "\nકૃપા કરીને માર્કેટનું નામ લખો."
+        elif lang == "en":
+            msg += "\nPlease type the market name."
+        else:
+            msg += "\nकृपया मंडी का नाम लिखें।"
 
         return jsonify({"text": msg})
 
-    # MARKET
+    # -----------------------------
+    # 🏬 MARKET DETECTION
+    # -----------------------------
     if context["state"]:
         state = context["state"]
         state_records = fetch_state_records(state)
@@ -343,14 +370,28 @@ def chat():
                 if not commodities:
                     return jsonify({"text": f"No commodities found in {market}."})
 
-                msg = f"Available commodities in {market}:\n\n"
+                if lang == "gu":
+                    msg = f"{market} માં ઉપલબ્ધ પાકો:\n\n"
+                elif lang == "en":
+                    msg = f"Available commodities in {market}:\n\n"
+                else:
+                    msg = f"{market} में उपलब्ध फसलें:\n\n"
+
                 for c in commodities:
                     msg += f"- {c}\n"
-                msg += "\nPlease type commodity name."
+
+                if lang == "gu":
+                    msg += "\nકૃપા કરીને પાકનું નામ લખો."
+                elif lang == "en":
+                    msg += "\nPlease type commodity name."
+                else:
+                    msg += "\nकृपया फसल का नाम लिखें।"
 
                 return jsonify({"text": msg})
 
-    # COMMODITY
+    # -----------------------------
+    # 🌾 COMMODITY PRICE
+    # -----------------------------
     if context["state"] and context["market"]:
         state = context["state"]
         market = context["market"]
@@ -359,21 +400,43 @@ def chat():
         for r in market_records:
             commodity = (r.get("commodity") or "").strip()
             if commodity and commodity.lower() in q.lower():
-                return jsonify({
-                    "text": f"""Price breakdown for {commodity} in {market} ({state}):
+                if lang == "gu":
+                    msg = f"""📊 {commodity} નો ભાવ ({market}, {state}):
+
+ન્યૂનતમ ભાવ: ₹{r.get('min_price')}
+મહત્તમ ભાવ: ₹{r.get('max_price')}
+મોડલ ભાવ: ₹{r.get('modal_price')}
+તારીખ: {r.get('arrival_date')}
+"""
+                elif lang == "en":
+                    msg = f"""📊 Price breakdown for {commodity} in {market} ({state}):
 
 Minimum Price: ₹{r.get('min_price')}
 Maximum Price: ₹{r.get('max_price')}
 Modal Price: ₹{r.get('modal_price')}
 Arrival Date: {r.get('arrival_date')}
 """
-                })
+                else:
+                    msg = f"""📊 {commodity} का भाव ({market}, {state}):
 
-    return jsonify({
-        "text": "Start with: Punjab mandi / Rajasthan mandi / Gujarat mandi OR type: weather OR open /pib-news"
-    })
+न्यूनतम मूल्य: ₹{r.get('min_price')}
+अधिकतम मूल्य: ₹{r.get('max_price')}
+मोडल मूल्य: ₹{r.get('modal_price')}
+तारीख: {r.get('arrival_date')}
+"""
 
+                return jsonify({"text": msg})
 
+    # -----------------------------
+    # 🔁 FALLBACK
+    # -----------------------------
+    fallback = {
+        "en": "Start with: Punjab mandi / Rajasthan mandi / Gujarat mandi OR type: weather",
+        "hi": "शुरू करें: Punjab mandi / Rajasthan mandi / Gujarat mandi या 'weather' लिखें।",
+        "gu": "શરૂ કરો: Punjab mandi / Rajasthan mandi / Gujarat mandi અથવા 'weather' લખો."
+    }
+
+    return jsonify({"text": fallback.get(lang, fallback["hi"])})
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=port)

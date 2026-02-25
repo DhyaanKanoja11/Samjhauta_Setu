@@ -1,57 +1,20 @@
 import axios from "axios";
+import i18n from "../i18n";
 
-/*
-  Vercel Environment Variables:
-  VITE_API_URL_CHATBOT
-  VITE_API_URL_OCR
-*/
-
-// -----------------------------
-// Base URLs
-// -----------------------------
 const normalize = (url) => (url ? url.replace(/\/+$/, "") : "");
 
 const BASE_URL_CHATBOT = normalize(import.meta.env.VITE_API_URL_CHATBOT);
 const BASE_URL_OCR = normalize(import.meta.env.VITE_API_URL_OCR);
 
-// Safety check (helps debugging in production)
-if (!BASE_URL_CHATBOT) {
-  console.error("❌ VITE_API_URL_CHATBOT is not defined");
-}
-if (!BASE_URL_OCR) {
-  console.error("❌ VITE_API_URL_OCR is not defined");
-}
+const CHATBOT_API = axios.create({ baseURL: BASE_URL_CHATBOT, timeout: 60000 });
+const OCR_API = axios.create({ baseURL: BASE_URL_OCR, timeout: 60000 });
 
-// -----------------------------
-// Axios Instances
-// -----------------------------
-const CHATBOT_API = axios.create({
-  baseURL: BASE_URL_CHATBOT,
-  timeout: 60000, // 60s for Render cold starts
-});
-
-const OCR_API = axios.create({
-  baseURL: BASE_URL_OCR,
-  timeout: 60000,
-});
-
-// -----------------------------
-// Warm-up (Render sleep fix)
-// -----------------------------
 export const warmUp = async () => {
   try {
-    await Promise.allSettled([
-      CHATBOT_API.get("/"),
-      OCR_API.get("/"),
-    ]);
-  } catch {
-    // silent fail — warmup should never crash UI
-  }
+    await Promise.allSettled([CHATBOT_API.get("/"), OCR_API.get("/")]);
+  } catch {}
 };
 
-// ==============================
-// OCR / Document APIs
-// ==============================
 export const scanDocument = async (file, lang = "hi") => {
   const formData = new FormData();
   formData.append("file", file);
@@ -69,17 +32,18 @@ export const analyzeText = async (text, lang = "hi") => {
   return res.data;
 };
 
-// ==============================
-// Chatbot APIs
-// ==============================
 export const chatWithBot = async (text) => {
-  const res = await CHATBOT_API.post("/chat", { text });
+  const res = await CHATBOT_API.post("/chat", {
+    text,
+    lang: i18n.language || "hi",
+  });
   return res.data;
 };
 
 export const chatWithBotAudio = async (audioBlob) => {
   const formData = new FormData();
   formData.append("audio", audioBlob, "voice.webm");
+  formData.append("lang", i18n.language || "hi");
 
   const res = await CHATBOT_API.post("/chat", formData, {
     headers: { "Content-Type": "multipart/form-data" },
@@ -93,27 +57,17 @@ export const chatWithWeather = async (lat, lon) => {
     text: "weather",
     lat,
     lon,
+    lang: i18n.language || "hi",
   });
   return res.data;
 };
 
-// ==============================
-// PIB News
-// ==============================
 export const getPIBNews = async (count = 10) => {
-  const res = await CHATBOT_API.get("/pib-news", {
-    params: { count },
-  });
+  const res = await CHATBOT_API.get("/pib-news", { params: { count } });
   return res.data;
 };
 
-// ==============================
-// Mandi (Important Fix Here)
-// ==============================
 export const getTopCommodities = async (state = "Punjab") => {
-  const res = await CHATBOT_API.get("/top-commodities", {
-    params: { state },   // ✅ safer than string interpolation
-  });
-
+  const res = await CHATBOT_API.get("/top-commodities", { params: { state } });
   return res.data;
 };

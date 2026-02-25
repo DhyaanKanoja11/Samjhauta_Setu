@@ -1,13 +1,11 @@
-import MandiPrices from '../components/dashboard/MandiPrices';
-import VoiceAssistant from '../components/dashboard/VoiceAssistant';
+import MandiPrices from "../components/dashboard/MandiPrices";
 
 export default function MandiPage() {
   return (
-    <div className="min-h-screen bg-brand-cream/10 pb-24 md:pb-8">
-      <div className="container-custom py-8 md:py-12">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <div className="py-8">
         <MandiPrices compact={false} />
       </div>
-      <VoiceAssistant />
     </div>
   );
 }
