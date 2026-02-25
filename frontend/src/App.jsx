@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import MandiPage from "./pages/MandiPage";
@@ -35,7 +41,10 @@ export default function App() {
     <Router>
       <LayoutWrapper>
         <Routes>
-          <Route path="/" element={isAuth ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route
+            path="/"
+            element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
+          />
           <Route path="/mandi" element={<MandiPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
