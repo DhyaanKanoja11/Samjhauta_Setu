@@ -1,29 +1,39 @@
+import { Link, useLocation } from "react-router-dom";
 import { Home, Wheat, FileText, Scale } from "lucide-react";
 
 export default function MobileBottomNav() {
+  const location = useLocation();
+
+  const itemStyle = (path) =>
+    location.pathname === path
+      ? "text-green-600"
+      : "text-neutral-500";
+
   return (
-    <div className="mobile-bottom-nav">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 z-50">
+      <div className="flex justify-around items-center h-[70px]">
 
-      <a href="/" className="flex flex-col items-center text-xs tap-large">
-        <Home size={20} />
-        Home
-      </a>
+        <Link to="/" className={`flex flex-col items-center text-xs ${itemStyle("/")}`}>
+          <Home size={20} />
+          Home
+        </Link>
 
-      <a href="/mandi" className="flex flex-col items-center text-xs tap-large">
-        <Wheat size={20} />
-        Mandi
-      </a>
+        <Link to="/mandi" className={`flex flex-col items-center text-xs ${itemStyle("/mandi")}`}>
+          <Wheat size={20} />
+          Mandi
+        </Link>
 
-      <a href="/documents" className="flex flex-col items-center text-xs tap-large">
-        <FileText size={20} />
-        Scan
-      </a>
+        <Link to="/documents" className={`flex flex-col items-center text-xs ${itemStyle("/documents")}`}>
+          <FileText size={20} />
+          Scan
+        </Link>
 
-      <a href="/cases" className="flex flex-col items-center text-xs tap-large">
-        <Scale size={20} />
-        Disputes
-      </a>
+        <Link to="/cases" className={`flex flex-col items-center text-xs ${itemStyle("/cases")}`}>
+          <Scale size={20} />
+          Disputes
+        </Link>
 
+      </div>
     </div>
   );
 }

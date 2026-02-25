@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import MandiPage from "./pages/MandiPage";
@@ -18,9 +24,19 @@ function LayoutWrapper({ children }) {
   return (
     <>
       {!hideNavbar && <Navbar />}
-      <div className={!hideNavbar ? "pt-[80px] pb-[90px]" : ""}>
-        {children}
+
+      <div
+        className={
+          hideNavbar
+            ? "min-h-screen"
+            : "pt-[68px] pb-[80px] md:pb-0 min-h-screen bg-neutral-50 dark:bg-neutral-950"
+        }
+      >
+        <div className="mx-auto w-full max-w-6xl px-4 md:px-8">
+          {children}
+        </div>
       </div>
+
       {!hideNavbar && <MobileBottomNav />}
     </>
   );
@@ -33,7 +49,10 @@ export default function App() {
     <Router>
       <LayoutWrapper>
         <Routes>
-          <Route path="/" element={isAuth ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route
+            path="/"
+            element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
+          />
           <Route path="/mandi" element={<MandiPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/documents" element={<DocumentsPage />} />

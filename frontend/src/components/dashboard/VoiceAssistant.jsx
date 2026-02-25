@@ -23,7 +23,9 @@ export default function VoiceAssistant() {
   const scrollToBottom = () =>
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  useEffect(() => scrollToBottom(), [messages, isOpen]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isOpen]);
 
   const addBotMessage = (text) => {
     setMessages((prev) => [
@@ -66,10 +68,9 @@ export default function VoiceAssistant() {
     setIsLoading(true);
 
     try {
-      // WEATHER FLOW
       if (isWeatherQuery(text)) {
         if (!navigator.geolocation) {
-          addBotMessage("Geolocation not supported in this browser.");
+          addBotMessage("Geolocation not supported.");
           setIsLoading(false);
           return;
         }
@@ -81,18 +82,15 @@ export default function VoiceAssistant() {
               const lon = pos.coords.longitude;
 
               const response = await API.chatWithWeather(lat, lon);
-              addBotMessage(response?.text || "Weather data unavailable.");
-            } catch (err) {
-              console.error(err);
+              addBotMessage(response?.text || "Weather unavailable.");
+            } catch {
               addBotMessage("Weather fetch failed.");
             } finally {
               setIsLoading(false);
             }
           },
           () => {
-            addBotMessage(
-              "Location permission denied. Please allow location access."
-            );
+            addBotMessage("Location permission denied.");
             setIsLoading(false);
           }
         );
@@ -100,12 +98,10 @@ export default function VoiceAssistant() {
         return;
       }
 
-      // NORMAL TEXT FLOW
       const response = await API.chatWithBot(text);
       addBotMessage(response?.text || "No response received.");
-    } catch (error) {
-      console.error("Chat error:", error);
-      addBotMessage("Something went wrong. Please try again.");
+    } catch {
+      addBotMessage("Something went wrong.");
     } finally {
       if (!isWeatherQuery(text)) setIsLoading(false);
     }
@@ -133,8 +129,7 @@ export default function VoiceAssistant() {
         try {
           const response = await API.chatWithBotAudio(audioBlob);
           addBotMessage(response?.text || "Voice response unavailable.");
-        } catch (err) {
-          console.error(err);
+        } catch {
           addBotMessage("Voice request failed.");
         } finally {
           setIsLoading(false);
@@ -143,8 +138,7 @@ export default function VoiceAssistant() {
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
-    } catch (err) {
-      console.error(err);
+    } catch {
       addBotMessage("Microphone access denied.");
     }
   };
@@ -165,11 +159,11 @@ export default function VoiceAssistant() {
 
   return (
     <>
-      {/* Mobile Backdrop */}
+      {/* Backdrop for mobile */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 sm:hidden"
+          className="fixed inset-0 bg-black/40 z-[60] sm:hidden transition-opacity duration-200"
         />
       )}
 
@@ -177,31 +171,50 @@ export default function VoiceAssistant() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 w-16 h-16 bg-brand-green text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all z-50"
+          className="
+            fixed
+            right-5
+            bottom-[85px] sm:bottom-6
+            w-14 h-14
+            bg-brand-green text-white
+            rounded-full shadow-xl
+            flex items-center justify-center
+            hover:scale-105 active:scale-95
+            transition-all duration-200
+            z-[70]
+          "
         >
-          <Mic />
+          <MessageSquare size={22} />
         </button>
       )}
 
       {/* Chat Panel */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white dark:bg-neutral-900 shadow-2xl z-50 transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`
+          fixed
+          top-0 right-0
+          h-full
+          w-full sm:w-[480px]
+          bg-white dark:bg-neutral-900
+          shadow-2xl
+          z-[80]
+          transition-transform duration-200 ease-out
+          ${isOpen ? "translate-x-0" : "translate-x-full"}
+        `}
       >
         {/* Header */}
         <div className="bg-brand-green text-white p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <MessageSquare />
+            <MessageSquare size={20} />
             <h3 className="font-semibold">Agri Assistant</h3>
           </div>
           <button onClick={() => setIsOpen(false)}>
-            <X />
+            <X size={20} />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 h-[calc(100%-170px)]">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 h-[calc(100%-180px)]">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -229,12 +242,12 @@ export default function VoiceAssistant() {
         </div>
 
         {/* Quick Queries */}
-        <div className="px-4 py-2 flex gap-2 overflow-x-auto">
+        <div className="px-4 py-2 flex gap-2 overflow-x-auto border-t dark:border-neutral-800">
           {quickQueries.map((q) => (
             <button
               key={q}
               onClick={() => handleSend(q)}
-              className="px-3 py-1 bg-neutral-200 dark:bg-neutral-700 text-xs rounded-full whitespace-nowrap"
+              className="px-3 py-1 bg-neutral-200 dark:bg-neutral-700 text-xs rounded-full whitespace-nowrap hover:bg-neutral-300 transition"
             >
               {q}
             </button>
@@ -242,7 +255,7 @@ export default function VoiceAssistant() {
         </div>
 
         {/* Input Section */}
-        <div className="p-4 border-t flex items-center gap-2">
+        <div className="p-4 border-t dark:border-neutral-800 flex items-center gap-2 bg-white dark:bg-neutral-900">
           <button
             onMouseDown={startRecording}
             onMouseUp={stopRecording}
@@ -253,7 +266,6 @@ export default function VoiceAssistant() {
                 ? "bg-red-500 text-white"
                 : "bg-neutral-200 dark:bg-neutral-800"
             }`}
-            title="Hold to talk"
           >
             <Mic size={18} />
           </button>
