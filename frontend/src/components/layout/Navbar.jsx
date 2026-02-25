@@ -1,35 +1,63 @@
-import {
-  Home,
-  Wheat,
-  FileText,
-  Scale,
-  User,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { Home, Wheat, FileText, Scale, User, Sun, Moon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
 
-  const {
-    darkMode,
-    setDarkMode,
-    fontSize,
-    setFontSize,
-    language,
-    setLanguage,
-  } = useTheme();
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
+  );
+
+  const [language, setLanguage] = useState(
+    localStorage.getItem("language") || "en"
+  );
+
+  const [fontSize, setFontSize] = useState(
+    localStorage.getItem("fontSize") || "base"
+  );
+
+  // Apply dark mode
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
+  // Apply font size
+  useEffect(() => {
+    document.documentElement.classList.remove("text-sm", "text-base", "text-lg");
+
+    if (fontSize === "sm") {
+      document.documentElement.classList.add("text-sm");
+    } else if (fontSize === "lg") {
+      document.documentElement.classList.add("text-lg");
+    } else {
+      document.documentElement.classList.add("text-base");
+    }
+
+    localStorage.setItem("fontSize", fontSize);
+  }, [fontSize]);
+
+  // Apply language (Google auto-translate)
+  useEffect(() => {
+    localStorage.setItem("language", language);
+    const select = document.querySelector(".goog-te-combo");
+    if (select) {
+      select.value = language;
+      select.dispatchEvent(new Event("change"));
+    }
+  }, [language]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 z-50">
 
       <div className="h-[72px] flex items-center justify-between max-w-6xl mx-auto px-4">
 
+        {/* Logo */}
         <div className="text-xl font-bold text-green-700 dark:text-green-400">
           🌾 Samjhauta Setu
         </div>
 
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6 text-[15px] font-medium">
 
           <Link to="/" className="flex items-center gap-1">
@@ -59,11 +87,14 @@ export default function Navbar() {
             <button onClick={() => setFontSize("lg")}>A+</button>
           </div>
 
-          {/* Language */}
+          {/* Language Dropdown */}
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded px-2 py-1 text-sm 
+             bg-white text-black 
+             dark:bg-neutral-800 dark:text-white 
+             dark:border-neutral-600"
           >
             <option value="en">English</option>
             <option value="hi">हिन्दी</option>
@@ -77,13 +108,16 @@ export default function Navbar() {
 
         </div>
 
-        {/* Mobile */}
+        {/* Mobile Controls */}
         <div className="md:hidden flex items-center gap-3">
 
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="border rounded px-2 py-1 text-xs"
+            className="border rounded px-2 py-1 text-xs 
+             bg-white text-black 
+             dark:bg-neutral-800 dark:text-white 
+             dark:border-neutral-600"
           >
             <option value="en">EN</option>
             <option value="hi">HI</option>
