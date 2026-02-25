@@ -1,131 +1,122 @@
 import { useState } from "react";
-import { ChevronRight, ShieldCheck, Globe, HelpCircle } from "lucide-react";
+import { Camera, ChevronRight, Globe, ShieldCheck, HelpCircle } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export default function ProfilePage() {
 
-  const [activePanel, setActivePanel] = useState(null);
+  const { language, setLanguage } = useTheme();
 
-  const { language, setLanguage, darkMode, setDarkMode } = useTheme();
+  const [user, setUser] = useState({
+    name: "Rajesh Patel",
+    phone: "+91 98765 43210",
+    location: "Anand, Gujarat",
+    land: "3 Acres",
+    crops: "Wheat, Cotton",
+    photo: null
+  });
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUser({ ...user, photo: URL.createObjectURL(file) });
+    }
+  };
 
   return (
     <div className="min-h-screen py-10">
 
-      <h1 className="text-3xl font-bold text-green-700 dark:text-green-400 mb-6">
-        Profile Settings
+      <h1 className="text-3xl font-bold text-green-700 dark:text-green-400 mb-8">
+        Profile
       </h1>
 
-      {/* SETTINGS BUTTONS */}
-      <div className="space-y-4">
+      {/* USER CARD */}
+      <div className="bg-white dark:bg-neutral-900 
+                      rounded-2xl p-8 shadow-md 
+                      border border-neutral-200 dark:border-neutral-700">
+
+        <div className="flex flex-col md:flex-row items-center gap-6">
+
+          <div className="relative">
+            <div className="w-28 h-28 rounded-full bg-neutral-200 dark:bg-neutral-700 overflow-hidden flex items-center justify-center">
+              {user.photo ? (
+                <img src={user.photo} alt="profile" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-3xl font-bold">
+                  {user.name[0]}
+                </span>
+              )}
+            </div>
+
+            <label className="absolute bottom-0 right-0 bg-green-600 p-2 rounded-full cursor-pointer">
+              <Camera size={16} color="white" />
+              <input type="file" hidden onChange={handlePhotoUpload} />
+            </label>
+          </div>
+
+          <div className="space-y-2 text-center md:text-left">
+            <h2 className="text-xl font-semibold">{user.name}</h2>
+            <p className="text-neutral-600 dark:text-neutral-400">{user.phone}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{user.location}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">
+              Land: {user.land}
+            </p>
+            <p className="text-neutral-600 dark:text-neutral-400">
+              Crops: {user.crops}
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* SETTINGS */}
+      <div className="mt-10 space-y-4">
 
         {/* Language */}
-        <button
-          onClick={() => setActivePanel("language")}
-          className="w-full flex items-center justify-between p-5 rounded-2xl 
-                     bg-neutral-100 dark:bg-neutral-800 
-                     hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
-        >
+        <div className="flex items-center justify-between p-5 
+                        bg-neutral-100 dark:bg-neutral-800 
+                        rounded-2xl">
           <div className="flex items-center gap-3">
             <Globe />
-            <span>Language Settings</span>
+            <span>Language</span>
           </div>
-          <ChevronRight />
-        </button>
+
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="border rounded px-3 py-1 
+                       bg-white dark:bg-neutral-700 
+                       dark:text-white dark:border-neutral-600"
+          >
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="gu">ગુજરાતી</option>
+          </select>
+        </div>
 
         {/* Security */}
-        <button
-          onClick={() => setActivePanel("security")}
-          className="w-full flex items-center justify-between p-5 rounded-2xl 
-                     bg-neutral-100 dark:bg-neutral-800 
-                     hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
-        >
+        <div className="flex items-center justify-between p-5 
+                        bg-neutral-100 dark:bg-neutral-800 
+                        rounded-2xl">
           <div className="flex items-center gap-3">
             <ShieldCheck />
             <span>Security & Privacy</span>
           </div>
           <ChevronRight />
-        </button>
+        </div>
 
         {/* Help */}
-        <button
-          onClick={() => setActivePanel("help")}
-          className="w-full flex items-center justify-between p-5 rounded-2xl 
-                     bg-neutral-100 dark:bg-neutral-800 
-                     hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
-        >
+        <div className="flex items-center justify-between p-5 
+                        bg-neutral-100 dark:bg-neutral-800 
+                        rounded-2xl">
           <div className="flex items-center gap-3">
             <HelpCircle />
             <span>Help & Support</span>
           </div>
           <ChevronRight />
-        </button>
+        </div>
 
       </div>
-
-      {/* MODAL PANEL */}
-      {activePanel && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 w-[90%] max-w-md">
-
-            {/* Close */}
-            <div className="flex justify-between mb-6">
-              <h2 className="text-xl font-semibold">
-                {activePanel === "language" && "Language Settings"}
-                {activePanel === "security" && "Security & Privacy"}
-                {activePanel === "help" && "Help & Support"}
-              </h2>
-              <button onClick={() => setActivePanel(null)}>✕</button>
-            </div>
-
-            {/* LANGUAGE PANEL */}
-            {activePanel === "language" && (
-              <div className="space-y-4">
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full border rounded px-3 py-2 
-                             bg-white dark:bg-neutral-800 
-                             dark:text-white dark:border-neutral-600"
-                >
-                  <option value="en">English</option>
-                  <option value="hi">हिन्दी</option>
-                  <option value="gu">ગુજરાતી</option>
-                </select>
-              </div>
-            )}
-
-            {/* SECURITY PANEL */}
-            {activePanel === "security" && (
-              <div className="space-y-4 text-sm text-neutral-600 dark:text-neutral-400">
-                <p>• All documents are encrypted.</p>
-                <p>• Data stored securely on protected cloud servers.</p>
-                <p>• No public visibility of disputes.</p>
-
-                <div className="flex items-center justify-between mt-4">
-                  <span>Dark Mode</span>
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="px-3 py-1 bg-green-600 text-white rounded-lg"
-                  >
-                    Toggle
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* HELP PANEL */}
-            {activePanel === "help" && (
-              <div className="space-y-4 text-sm text-neutral-600 dark:text-neutral-400">
-                <p>For assistance, contact:</p>
-                <p className="font-semibold">support@samjhautasetu.in</p>
-                <p>Helpline: 1800-000-000</p>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
 
     </div>
   );
