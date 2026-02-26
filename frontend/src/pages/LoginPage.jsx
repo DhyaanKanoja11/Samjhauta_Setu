@@ -9,7 +9,7 @@ import Card from '../components/common/Card';
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    // 🔥 SIMPLE INTERNAL LANGUAGE STATE
+    // 🔥 Internal language state (NO i18n)
     const [lang, setLang] = useState('hi');
 
     const translations = {
@@ -86,7 +86,7 @@ export default function LoginPage() {
             setConfirmationResult(confirmation);
             setStep('OTP');
         } catch (err) {
-            setError("SMS sending failed.");
+            setError("SMS sending failed. Try again.");
         }
 
         setLoading(false);
@@ -118,93 +118,141 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-brand-green dark:bg-[#0F110C] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-brand-green dark:bg-[#0F110C] flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-500">
+
+            {/* Background Elements (UNCHANGED) */}
+            <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-tan/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
 
             <div id="recaptcha-container"></div>
 
-            <div className="w-full max-w-md relative z-10">
-                <Card variant="glass" className="p-10 border-white/20">
+            <div className="w-full max-w-md animate-slide-up relative z-10">
+                <Card variant="glass" className="p-10 border-white/20 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]">
 
-                    {/* Header */}
+                    {/* Header (UNCHANGED UI) */}
                     <div className="flex flex-col items-center mb-10">
-                        <ShieldCheck className="w-12 h-12 text-brand-green mb-4" />
-                        <h1 className="text-4xl font-black text-brand-green dark:text-brand-tan uppercase mb-2">
+                        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl mb-6">
+                            <ShieldCheck className="w-12 h-12 text-brand-green" />
+                        </div>
+
+                        <h1 className="text-4xl font-black text-brand-green dark:text-brand-tan tracking-tighter uppercase mb-2">
                             {t.appName}
                         </h1>
-                        <p className="text-[10px] uppercase font-black tracking-widest text-neutral-400">
+
+                        <p className="text-[10px] uppercase font-black tracking-[0.3em] text-neutral-400 dark:text-neutral-500">
                             {t.tagline}
                         </p>
                     </div>
 
                     {error && (
-                        <div className="mb-4 text-red-500 text-center font-bold text-xs">
-                            {error}
+                        <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
+                            <p className="text-xs font-bold text-red-500 uppercase tracking-wide">{error}</p>
                         </div>
                     )}
 
                     {step === 'PHONE' ? (
                         <form onSubmit={handleSendOtp} className="space-y-6">
 
-                            <label className="text-xs font-bold uppercase">
-                                {t.phoneLabel}
-                            </label>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-brand-brown dark:text-brand-tan uppercase tracking-widest px-1">
+                                    {t.phoneLabel}
+                                </label>
 
-                            <input
-                                type="tel"
-                                maxLength="10"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                                className="w-full p-4 rounded-2xl border"
-                                placeholder="9876543210"
-                            />
+                                <div className="relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold text-lg">
+                                        +91
+                                    </div>
 
-                            <Button type="submit" disabled={loading} className="w-full">
-                                {loading ? <Loader2 className="animate-spin" /> : t.getOtp}
+                                    <input
+                                        type="tel"
+                                        maxLength="10"
+                                        placeholder="9876543210"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                                        className="w-full pl-16 pr-6 py-5 bg-white/50 dark:bg-neutral-800/50 rounded-2xl border-2 border-transparent focus:border-brand-green focus:bg-white dark:focus:bg-neutral-800 outline-none font-bold text-xl transition-all"
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-brand-green hover:bg-brand-brown rounded-2xl py-8 text-xl font-black uppercase tracking-[0.2em] shadow-xl group disabled:opacity-70"
+                            >
+                                {loading ? <Loader2 className="animate-spin w-6 h-6" /> : t.getOtp}
                             </Button>
                         </form>
                     ) : (
-                        <form onSubmit={handleVerifyOtp} className="space-y-6">
+                        <form onSubmit={handleVerifyOtp} className="space-y-6 animate-fade-in">
 
-                            <label className="text-xs font-bold uppercase text-center block">
-                                {t.enterOtp}
-                            </label>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black text-brand-brown dark:text-brand-tan uppercase tracking-widest px-1 text-center block">
+                                    {t.enterOtp}
+                                </label>
 
-                            <input
-                                type="text"
-                                maxLength="6"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                className="w-full p-4 rounded-2xl border text-center"
-                            />
+                                <div className="relative">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-neutral-400">
+                                        <LockKeyhole className="w-5 h-5" />
+                                    </div>
 
-                            <Button type="submit" disabled={loading} className="w-full">
-                                {loading ? <Loader2 className="animate-spin" /> : t.verify}
+                                    <input
+                                        type="text"
+                                        maxLength="6"
+                                        placeholder="------"
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                                        className="w-full pl-14 pr-6 py-5 bg-white/50 dark:bg-neutral-800/50 rounded-2xl border-2 border-transparent focus:border-brand-green outline-none font-bold text-2xl tracking-[0.5em] text-center"
+                                        autoFocus
+                                    />
+                                </div>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-brand-brown hover:bg-brand-green rounded-2xl py-8 text-xl font-black uppercase tracking-[0.2em] shadow-xl"
+                            >
+                                {loading ? <Loader2 className="animate-spin w-6 h-6" /> : t.verify}
                             </Button>
 
                             <button
                                 type="button"
                                 onClick={() => setStep('PHONE')}
-                                className="w-full text-xs mt-2"
+                                className="w-full text-center text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-brand-green mt-4"
                             >
                                 {t.changeNumber}
                             </button>
                         </form>
                     )}
 
-                    <div className="mt-6">
+                    <div className="mt-8">
                         <button
                             onClick={handleGuest}
-                            className="w-full p-4 rounded-2xl bg-white/10 text-white font-bold text-xs uppercase"
+                            className="w-full p-4 rounded-2xl bg-white/10 dark:bg-white/5 border border-white/20 hover:bg-white/20 text-white font-black uppercase tracking-widest text-[10px] transition-all flex items-center justify-center gap-2"
                         >
+                            <User className="w-4 h-4" />
                             {t.guestMode}
                         </button>
                     </div>
 
-                    {/* Language Switch */}
-                    <div className="mt-8 flex justify-center gap-3">
-                        <button onClick={() => setLang('en')} className="text-xs font-bold">English</button>
-                        <button onClick={() => setLang('hi')} className="text-xs font-bold">हिन्दी</button>
-                        <button onClick={() => setLang('gu')} className="text-xs font-bold">ગુજરાતી</button>
+                    {/* Language Switcher (UI SAME STYLE) */}
+                    <div className="mt-10 pt-8 border-t border-white/10">
+                        <div className="flex flex-wrap justify-center gap-2">
+                            {['en', 'hi', 'gu'].map(code => (
+                                <button
+                                    key={code}
+                                    onClick={() => setLang(code)}
+                                    className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all ${
+                                        lang === code
+                                            ? 'bg-white text-brand-green'
+                                            : 'text-white/60 hover:text-white hover:bg-white/10'
+                                    }`}
+                                >
+                                    {code === 'en' ? 'English' : code === 'hi' ? 'हिन्दी' : 'ગુજરાતી'}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                 </Card>
