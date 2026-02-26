@@ -27,18 +27,18 @@ export default function MandiPrices({ compact = false }) {
       const response = await getTopCommodities(state);
 
       const formatted = (response.data || []).map((item, index) => ({
-        id: index + 1,
+        id: index,
         crop: item.crop,
-        price: item.price,
+        price: Number(item.price),
+        unit: item.unit || '₹/quintal',
         change: 0,
         changePercent: 0,
-        unit: item.unit,
       }));
 
       setPrices(formatted);
     } catch (err) {
       console.error('Mandi fetch error:', err);
-      setError("Unable to fetch mandi prices.");
+      setError("Unable to fetch mandi prices. Please try again later.");
       setPrices([]);
     }
 
@@ -46,7 +46,7 @@ export default function MandiPrices({ compact = false }) {
   };
 
   const filteredPrices = prices.filter(item =>
-    item.crop.toLowerCase().includes(searchQuery.toLowerCase())
+    item.crop?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const displayPrices = compact
@@ -57,7 +57,7 @@ export default function MandiPrices({ compact = false }) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {[1,2,3,4].map(i => (
-          <div key={i} className="animate-pulse bg-neutral-200/30 h-48 rounded-3xl" />
+          <div key={i} className="animate-pulse bg-neutral-200 dark:bg-neutral-800 h-40 rounded-3xl" />
         ))}
       </div>
     );
@@ -67,7 +67,7 @@ export default function MandiPrices({ compact = false }) {
     <div className="space-y-8">
 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-        <h2 className="text-4xl font-black text-brand-green">
+        <h2 className="text-3xl font-bold text-brand-green">
           {t('mandiUpdate') || "Live Mandi Prices"}
         </h2>
 
@@ -78,20 +78,17 @@ export default function MandiPrices({ compact = false }) {
               placeholder="Search crop..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 rounded-2xl border"
+              className="px-4 py-2 rounded-xl border dark:bg-neutral-900"
             />
 
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="px-4 py-2 rounded-2xl border"
+              className="px-4 py-2 rounded-xl border dark:bg-neutral-900"
             >
               <option value="Punjab">Punjab</option>
               <option value="Rajasthan">Rajasthan</option>
               <option value="Gujarat">Gujarat</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Madhya Pradesh">Madhya Pradesh</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
             </select>
           </div>
         )}
@@ -110,15 +107,14 @@ export default function MandiPrices({ compact = false }) {
               key={item.id}
               crop={item.crop}
               price={item.price}
+              unit={item.unit}
               change={item.change}
               changePercent={item.changePercent}
-              unit={item.unit}
-              variant="premium"
             />
           ))
         ) : (
           <div className="col-span-2 text-center py-10 text-neutral-500">
-            No prices found for selected location
+            No mandi prices available for selected state.
           </div>
         )}
       </div>
