@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
 import { ArrowUpRight, ShieldCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import MandiPrices from '../components/dashboard/MandiPrices';
 import Button from '../components/common/Button';
 import { getPIBNews } from '../services/api';
-import { translateText } from '../services/translateService';
-import i18n from '../i18n';
 
 export default function Dashboard() {
-  const { t } = useTranslation();
-  const [userName, setUserName] = useState(() => localStorage.getItem('userName') || 'किसान भाई');
+
+  const [userName] = useState(
+    () => localStorage.getItem('userName') || 'किसान भाई'
+  );
+
   const [news, setNews] = useState([]);
-  const [rawNews, setRawNews] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -21,41 +20,16 @@ export default function Dashboard() {
     const init = async () => {
       try {
         const data = await getPIBNews(10);
-        if (mounted) {
-          setRawNews(data.news || []);
-        }
+        if (mounted) setNews(data.news || []);
       } catch (err) {
         console.error("News Fetch Error:", err);
-        if (mounted) setRawNews([]);
+        if (mounted) setNews([]);
       }
     };
 
     init();
     return () => { mounted = false };
   }, []);
-
-  // 🔥 Re-translate when language changes
-  useEffect(() => {
-    const translateNews = async () => {
-      if (!rawNews.length) return;
-
-      if (i18n.language === "en") {
-        setNews(rawNews);
-        return;
-      }
-
-      const translated = await Promise.all(
-        rawNews.map(async (item) => ({
-          ...item,
-          title: await translateText(item.title, i18n.language)
-        }))
-      );
-
-      setNews(translated);
-    };
-
-    translateNews();
-  }, [rawNews, i18n.language]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0F110C] pb-24 md:pb-8 transition-colors duration-300">
@@ -66,7 +40,7 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-3">
               <h1 className="text-4xl font-bold">
-                {t('hello')}, {userName} 🙏
+                Hello, {userName} 🙏
               </h1>
               <p className="text-sm text-neutral-500">
                 {new Date().toLocaleDateString()}
@@ -76,7 +50,7 @@ export default function Dashboard() {
             <Link to="/documents">
               <Button className="bg-green-700 text-white">
                 <ShieldCheck className="w-5 h-5" />
-                {t('legalPaperChecker')}
+                Legal Paper Checker
               </Button>
             </Link>
           </div>
@@ -85,7 +59,7 @@ export default function Dashboard() {
         {/* News */}
         <div>
           <h2 className="text-3xl font-bold mb-8 text-green-700">
-            {t('newsFeed')}
+            News Feed
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -100,13 +74,14 @@ export default function Dashboard() {
                 <h3 className="font-semibold mb-3 line-clamp-2">
                   {item.title}
                 </h3>
+
                 <span className="text-xs font-bold flex items-center gap-2 text-green-700">
-                  {t("readMore")} <ArrowUpRight className="w-3 h-3" />
+                  Read More <ArrowUpRight className="w-3 h-3" />
                 </span>
               </a>
             )) : (
               <div className="text-neutral-400">
-                {t("noNews")}
+                No news available.
               </div>
             )}
           </div>
