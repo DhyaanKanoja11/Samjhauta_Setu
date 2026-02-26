@@ -13,7 +13,7 @@ import DocumentsPage from "./pages/DocumentsPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./pages/ProtectedRoute";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 import Navbar from "./components/layout/Navbar";
 import MobileBottomNav from "./components/layout/MobileBottomNav";
