@@ -216,7 +216,8 @@ def fetch_state_records(state):
     params = {
         "api-key": DATA_GOV_API_KEY,
         "format": "json",
-        "limit": 1000  # bigger fetch
+        "limit": 1000,
+        "filters[state]": state  # ✅ API-side filtering (FIXED)
     }
 
     try:
@@ -226,15 +227,11 @@ def fetch_state_records(state):
             print("Data.gov HTTP Error:", r.status_code)
             return []
 
-        all_records = r.json().get("records", [])
+        records = r.json().get("records", [])
 
-        # 🔥 Filter locally instead of API filter
-        filtered = [
-            rec for rec in all_records
-            if rec.get("state", "").lower() == state.lower()
-        ]
+        print(f"Fetched {len(records)} mandi records for {state}")
 
-        return filtered
+        return records
 
     except Exception as e:
         print("API Error:", e)
