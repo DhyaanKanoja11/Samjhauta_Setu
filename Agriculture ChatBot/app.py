@@ -206,22 +206,20 @@ Wind Speed: {wind} km/h
 """
     except Exception as e:
         return f"Weather Error: {str(e)}"
-# -----------------------------------------------------
-# MANDI API (Data.gov) - Cached
-# -----------------------------------------------------
 @lru_cache(maxsize=50)
 def fetch_state_records(state):
     url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
 
+    # 🔥 FIXED — smaller limit + safer timeout
     params = {
         "api-key": DATA_GOV_API_KEY,
         "format": "json",
-        "limit": 1000,
-        "filters[state]": state  # ✅ API-side filtering (FIXED)
+        "limit": 300,                 # ✅ Reduced from 1000 → 300
+        "filters[state]": state
     }
 
     try:
-        r = requests.get(url, params=params, timeout=20)
+        r = requests.get(url, params=params, timeout=10)  # ✅ Reduced timeout
 
         if r.status_code != 200:
             print("Data.gov HTTP Error:", r.status_code)
