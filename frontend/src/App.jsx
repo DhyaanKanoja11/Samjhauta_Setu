@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
   useLocation,
 } from "react-router-dom";
 
@@ -14,6 +13,7 @@ import DocumentsPage from "./pages/DocumentsPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 import Navbar from "./components/layout/Navbar";
 import MobileBottomNav from "./components/layout/MobileBottomNav";
@@ -47,19 +47,28 @@ function LayoutWrapper({ children }) {
 }
 
 export default function App() {
-  const [isAuth] = useState(
+  const [loading, setLoading] = useState(true);
+  const [isAuth, setIsAuth] = useState(
     !!localStorage.getItem("isAuthenticated")
   );
 
-  const [loading, setLoading] = useState(true);
-
-  // 🔥 Initial App Loader (Professional feel)
+  // Initial loader
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 800); // Smooth intro
+    }, 800);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // 🔥 Listen for auth updates
+  useEffect(() => {
+    const updateAuth = () => {
+      setIsAuth(!!localStorage.getItem("isAuthenticated"));
+    };
+
+    window.addEventListener("auth-update", updateAuth);
+    return () => window.removeEventListener("auth-update", updateAuth);
   }, []);
 
   if (loading) {
@@ -70,24 +79,22 @@ export default function App() {
     <Router>
       <LayoutWrapper>
         <Routes>
-          <Route
-            path="/"
-            element={
-              isAuth ? (
-                <Dashboard />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route path="/mandi" element={<MandiPage />} />
-          <Route path="/cases" element={<CasesPage />} />
-          <Route path="/documents" element={<DocumentsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+
+          {/* Public Route */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* 🔥 404 Fallback */}
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/mandi" element={<MandiPage />} />
+            <Route path="/cases" element={<CasesPage />} />
+            <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
+
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </LayoutWrapper>
     </Router>
