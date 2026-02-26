@@ -9,7 +9,6 @@ import Card from '../components/common/Card';
 export default function LoginPage() {
     const navigate = useNavigate();
 
-    // 🔥 Internal language state (NO i18n)
     const [lang, setLang] = useState('hi');
 
     const translations = {
@@ -102,7 +101,9 @@ export default function LoginPage() {
 
             localStorage.setItem('isAuthenticated', 'true');
             window.dispatchEvent(new Event('auth-update'));
-            navigate('/dashboard');
+
+            // ✅ FIXED NAVIGATION
+            navigate('/');
 
         } catch (err) {
             setError(t.invalidOtp);
@@ -114,13 +115,14 @@ export default function LoginPage() {
     const handleGuest = () => {
         localStorage.setItem('isAuthenticated', 'guest');
         window.dispatchEvent(new Event('auth-update'));
-        navigate('/dashboard');
+
+        // ✅ FIXED NAVIGATION
+        navigate('/');
     };
 
     return (
         <div className="min-h-screen bg-brand-green dark:bg-[#0F110C] flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-500">
 
-            {/* Background Elements (UNCHANGED) */}
             <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-tan/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
 
@@ -129,7 +131,7 @@ export default function LoginPage() {
             <div className="w-full max-w-md animate-slide-up relative z-10">
                 <Card variant="glass" className="p-10 border-white/20 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]">
 
-                    {/* Header (UNCHANGED UI) */}
+                    {/* Header */}
                     <div className="flex flex-col items-center mb-10">
                         <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl mb-6">
                             <ShieldCheck className="w-12 h-12 text-brand-green" />
@@ -150,9 +152,9 @@ export default function LoginPage() {
                         </div>
                     )}
 
+                    {/* PHONE FORM */}
                     {step === 'PHONE' ? (
                         <form onSubmit={handleSendOtp} className="space-y-6">
-
                             <div className="space-y-3">
                                 <label className="text-[10px] font-black text-brand-brown dark:text-brand-tan uppercase tracking-widest px-1">
                                     {t.phoneLabel}
@@ -185,7 +187,6 @@ export default function LoginPage() {
                         </form>
                     ) : (
                         <form onSubmit={handleVerifyOtp} className="space-y-6 animate-fade-in">
-
                             <div className="space-y-3">
                                 <label className="text-[10px] font-black text-brand-brown dark:text-brand-tan uppercase tracking-widest px-1 text-center block">
                                     {t.enterOtp}
@@ -226,6 +227,7 @@ export default function LoginPage() {
                         </form>
                     )}
 
+                    {/* Guest */}
                     <div className="mt-8">
                         <button
                             onClick={handleGuest}
@@ -236,7 +238,7 @@ export default function LoginPage() {
                         </button>
                     </div>
 
-                    {/* Language Switcher (UI SAME STYLE) */}
+                    {/* Language Switcher */}
                     <div className="mt-10 pt-8 border-t border-white/10">
                         <div className="flex flex-wrap justify-center gap-2">
                             {['en', 'hi', 'gu'].map(code => (
