@@ -6,11 +6,14 @@ import { Link } from 'react-router-dom';
 import MandiPrices from '../components/dashboard/MandiPrices';
 import Button from '../components/common/Button';
 import { getPIBNews } from '../services/api';
+import { translateText } from '../services/translateService';
+import i18n from '../i18n';
 
 export default function Dashboard() {
   const { t } = useTranslation();
   const [userName, setUserName] = useState(() => localStorage.getItem('userName') || 'किसान भाई');
   const [news, setNews] = useState([]);
+  const [rawNews, setRawNews] = useState([]);
 
   useEffect(() => {
     let mounted = true;
@@ -18,25 +21,47 @@ export default function Dashboard() {
     const init = async () => {
       try {
         const data = await getPIBNews(10);
-        if (mounted) setNews(data.news || []);
+        if (mounted) {
+          setRawNews(data.news || []);
+        }
       } catch (err) {
         console.error("News Fetch Error:", err);
-        if (mounted) setNews([]);
+        if (mounted) setRawNews([]);
       }
     };
 
     init();
-
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false };
   }, []);
+
+  // 🔥 Re-translate when language changes
+  useEffect(() => {
+    const translateNews = async () => {
+      if (!rawNews.length) return;
+
+      if (i18n.language === "en") {
+        setNews(rawNews);
+        return;
+      }
+
+      const translated = await Promise.all(
+        rawNews.map(async (item) => ({
+          ...item,
+          title: await translateText(item.title, i18n.language)
+        }))
+      );
+
+      setNews(translated);
+    };
+
+    translateNews();
+  }, [rawNews, i18n.language]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0F110C] pb-24 md:pb-8 transition-colors duration-300">
       <div className="max-w-6xl mx-auto py-8 md:py-12 space-y-12 px-4">
 
-        {/* Clean Hero */}
+        {/* Hero */}
         <div className="rounded-3xl bg-neutral-100 dark:bg-neutral-900 p-10 shadow-lg">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="space-y-3">
@@ -76,12 +101,12 @@ export default function Dashboard() {
                   {item.title}
                 </h3>
                 <span className="text-xs font-bold flex items-center gap-2 text-green-700">
-                  READ MORE <ArrowUpRight className="w-3 h-3" />
+                  {t("readMore")} <ArrowUpRight className="w-3 h-3" />
                 </span>
               </a>
             )) : (
               <div className="text-neutral-400">
-                No news available.
+                {t("noNews")}
               </div>
             )}
           </div>
