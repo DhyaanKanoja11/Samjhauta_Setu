@@ -9,13 +9,18 @@ from bs4 import BeautifulSoup
 from xml.etree import ElementTree as ET
 import time
 from math import floor
+import json
+from datetime import timedelta
+
+
 load_dotenv()
 
 app = Flask(__name__)
 
 # For local dev keep open. For deployment tighten allowed origins.
 CORS(app)
-
+CACHE_FILE = "mandi_cache.json"
+CACHE_DURATION = timedelta(hours=24)
 DATA_GOV_API_KEY = os.environ.get("DATA_GOV_API_KEY", "")
 MANDI_RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
 SUPPORTED_STATES = ["Punjab", "Rajasthan", "Gujarat"]
@@ -208,33 +213,68 @@ Wind Speed: {wind} km/h
         return f"Weather Error: {str(e)}"
 @lru_cache(maxsize=50)
 def fetch_state_records(state):
+
+    # 1️⃣ Check local cache first
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r") as f:
+                cache_data = json.load(f)
+
+            state_cache = cache_data.get(state)
+
+            if state_cache:
+                last_updated = datetime.fromisoformat(state_cache["timestamp"])
+
+                if datetime.utcnow() - last_updated < CACHE_DURATION:
+                    print(f"Serving {state} from local cache")
+                    return state_cache["data"]
+
+        except Exception as e:
+            print("Cache read error:", e)
+
+    # 2️⃣ If cache expired → Fetch fresh
+    print(f"Fetching fresh mandi data for {state}")
+
     url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
 
-    # 🔥 FIXED — smaller limit + safer timeout
     params = {
         "api-key": DATA_GOV_API_KEY,
         "format": "json",
-        "limit": 300,                 # ✅ Reduced from 1000 → 300
+        "limit": 300,
         "filters[state]": state
     }
 
     try:
-        r = requests.get(url, params=params, timeout=10)  # ✅ Reduced timeout
+        r = requests.get(url, params=params, timeout=10)
 
         if r.status_code != 200:
-            print("Data.gov HTTP Error:", r.status_code)
+            print("Data.gov error:", r.status_code)
             return []
 
         records = r.json().get("records", [])
 
-        print(f"Fetched {len(records)} mandi records for {state}")
+        # 3️⃣ Save to cache
+        cache_data = {}
+
+        if os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE, "r") as f:
+                cache_data = json.load(f)
+
+        cache_data[state] = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "data": records
+        }
+
+        with open(CACHE_FILE, "w") as f:
+            json.dump(cache_data, f)
+
+        print(f"Stored {state} data in cache")
 
         return records
 
     except Exception as e:
-        print("API Error:", e)
+        print("API error:", e)
         return []
-
 @lru_cache(maxsize=200)
 def fetch_market_records(state, market):
     url = f"https://api.data.gov.in/resource/{MANDI_RESOURCE_ID}"
