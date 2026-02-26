@@ -16,35 +16,36 @@ export default function Navbar() {
     localStorage.getItem("fontSize") || "base"
   );
 
-  // Apply dark mode
+  // Dark Mode
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  // Apply font size
+  // Font Size
   useEffect(() => {
     document.documentElement.classList.remove("text-sm", "text-base", "text-lg");
 
-    if (fontSize === "sm") {
-      document.documentElement.classList.add("text-sm");
-    } else if (fontSize === "lg") {
-      document.documentElement.classList.add("text-lg");
-    } else {
-      document.documentElement.classList.add("text-base");
-    }
+    if (fontSize === "sm") document.documentElement.classList.add("text-sm");
+    else if (fontSize === "lg") document.documentElement.classList.add("text-lg");
+    else document.documentElement.classList.add("text-base");
 
     localStorage.setItem("fontSize", fontSize);
   }, [fontSize]);
 
-  // Apply language (Google auto-translate)
+  // Google Translate Fix
   useEffect(() => {
     localStorage.setItem("language", language);
-    const select = document.querySelector(".goog-te-combo");
-    if (select) {
-      select.value = language;
-      select.dispatchEvent(new Event("change"));
-    }
+
+    const applyTranslate = () => {
+      const select = document.querySelector(".goog-te-combo");
+      if (select) {
+        select.value = language;
+        select.dispatchEvent(new Event("change"));
+      }
+    };
+
+    setTimeout(applyTranslate, 500);
   }, [language]);
 
   return (
@@ -52,12 +53,10 @@ export default function Navbar() {
 
       <div className="h-[72px] flex items-center justify-between max-w-6xl mx-auto px-4">
 
-        {/* Logo */}
         <div className="text-xl font-bold text-green-700 dark:text-green-400">
           🌾 Samjhauta Setu
         </div>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6 text-[15px] font-medium">
 
           <Link to="/" className="flex items-center gap-1">
@@ -87,7 +86,7 @@ export default function Navbar() {
             <button onClick={() => setFontSize("lg")}>A+</button>
           </div>
 
-          {/* Language Dropdown */}
+          {/* Language */}
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
@@ -108,7 +107,7 @@ export default function Navbar() {
 
         </div>
 
-        {/* Mobile Controls */}
+        {/* Mobile */}
         <div className="md:hidden flex items-center gap-3">
 
           <select
