@@ -24,18 +24,26 @@ import MobileBottomNav from "./components/layout/MobileBottomNav";
 import VoiceAssistant from "./components/dashboard/VoiceAssistant";
 import FullScreenLoader from "./components/common/FullScreenLoader";
 
+// ✅ IMPORTANT: Mount Google Translate globally
+import GoogleTranslate from "./components/layout/GoogleTranslate";
+
 function LayoutWrapper({ children }) {
   const location = useLocation();
   const hideLayout = location.pathname === "/login";
 
   return (
     <>
+      {/* ✅ Always mount translate (even if navbar is hidden) */}
+      <GoogleTranslate />
+
       {!hideLayout && <Navbar />}
 
-      <div className={!hideLayout ? "pt-[90px] pb-[110px] min-h-screen" : "min-h-screen"}>
-        <div className="mx-auto w-full max-w-6xl px-4 md:px-8">
-          {children}
-        </div>
+      <div
+        className={
+          !hideLayout ? "pt-[90px] pb-[110px] min-h-screen" : "min-h-screen"
+        }
+      >
+        <div className="mx-auto w-full max-w-6xl px-4 md:px-8">{children}</div>
       </div>
 
       {!hideLayout && <MobileBottomNav />}
@@ -46,7 +54,11 @@ function LayoutWrapper({ children }) {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [isAuth, setIsAuth] = useState(!!localStorage.getItem("isAuthenticated"));
+
+  // optional: if you use auth-update event elsewhere
+  const [isAuth, setIsAuth] = useState(
+    !!localStorage.getItem("isAuthenticated")
+  );
 
   // Initial loader
   useEffect(() => {
@@ -56,9 +68,8 @@ export default function App() {
 
   // Listen for auth updates (so UI updates after login/logout)
   useEffect(() => {
-    const updateAuth = () => {
+    const updateAuth = () =>
       setIsAuth(!!localStorage.getItem("isAuthenticated"));
-    };
 
     window.addEventListener("auth-update", updateAuth);
     return () => window.removeEventListener("auth-update", updateAuth);

@@ -43,19 +43,30 @@ export default function Navbar() {
     localStorage.setItem("fontSize", fontSize);
   }, [fontSize]);
 
-  // Google Translate Fix (if your widget exists)
+  // ✅ Google Translate: reliable apply (wait until widget is ready)
   useEffect(() => {
     localStorage.setItem("language", language);
 
-    const applyTranslate = () => {
+    const tryApply = () => {
       const select = document.querySelector(".goog-te-combo");
-      if (select) {
-        select.value = language;
-        select.dispatchEvent(new Event("change"));
-      }
+      if (!select) return false;
+
+      select.value = language;
+      select.dispatchEvent(new Event("change"));
+      return true;
     };
 
-    setTimeout(applyTranslate, 500);
+    // Try immediately
+    if (tryApply()) return;
+
+    // Retry for ~4 seconds (widget loads async)
+    let tries = 0;
+    const interval = setInterval(() => {
+      tries += 1;
+      if (tryApply() || tries > 40) clearInterval(interval);
+    }, 100);
+
+    return () => clearInterval(interval);
   }, [language]);
 
   const isActive = (path) => location.pathname === path;
@@ -92,7 +103,6 @@ export default function Navbar() {
             <Scale size={16} /> Disputes
           </Link>
 
-          {/* ✅ NEW: Krishi Setu */}
           <Link to="/krishi-setu" className={linkClass("/krishi-setu")}>
             <Landmark size={16} /> Krishi Setu
           </Link>
@@ -103,13 +113,25 @@ export default function Navbar() {
 
           {/* Font Controls */}
           <div className="flex gap-2 text-sm">
-            <button onClick={() => setFontSize("sm")} className="hover:opacity-80">
+            <button
+              onClick={() => setFontSize("sm")}
+              className="hover:opacity-80"
+              type="button"
+            >
               A-
             </button>
-            <button onClick={() => setFontSize("base")} className="hover:opacity-80">
+            <button
+              onClick={() => setFontSize("base")}
+              className="hover:opacity-80"
+              type="button"
+            >
               A
             </button>
-            <button onClick={() => setFontSize("lg")} className="hover:opacity-80">
+            <button
+              onClick={() => setFontSize("lg")}
+              className="hover:opacity-80"
+              type="button"
+            >
               A+
             </button>
           </div>
@@ -129,7 +151,7 @@ export default function Navbar() {
           </select>
 
           {/* Dark Mode */}
-          <button onClick={() => setDarkMode(!darkMode)}>
+          <button onClick={() => setDarkMode(!darkMode)} type="button">
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
@@ -149,7 +171,7 @@ export default function Navbar() {
             <option value="gu">GU</option>
           </select>
 
-          <button onClick={() => setDarkMode(!darkMode)}>
+          <button onClick={() => setDarkMode(!darkMode)} type="button">
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
