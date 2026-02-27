@@ -128,7 +128,7 @@ export default function KrishiSetuPage() {
               </h1>
               <p className="text-sm text-neutral-600 dark:text-neutral-300 max-w-2xl">
                 One place to access <b>Sarkari Yojana</b>, official farmer portals, and verified resources.
-                Built for <b>Atmanirbhar Bharat</b> — less confusion, more action.
+                Built for <b>Atmanirbhar Bharat</b> less confusion, more action.
               </p>
             </div>
 
