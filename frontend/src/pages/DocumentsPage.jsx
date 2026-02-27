@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FileText, Plus, Search, Folder, ShieldCheck, Download, Trash2, Eye } from 'lucide-react';
+import { FileText, Plus, Folder, ShieldCheck, Download, Trash2, Eye } from 'lucide-react';
 import Card from '../components/common/Card';
 import DocumentScanner from '../components/dashboard/DocumentScanner';
 import VoiceAssistant from '../components/dashboard/VoiceAssistant';
@@ -41,8 +41,6 @@ export default function DocumentsPage() {
                             Some functions may not work, as this is just a demo. After the app is officially deployed, you can use those functions as you log in.
                         </p>
                     </div>
-                    
-                    {/* The Green "Upload Doc" Button was removed from here */}
                 </header>
 
                 {/* Main Content Area */}
