@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import PriceCard from '../common/PriceCard';
 import Button from '../common/Button';
 import { getTopCommodities } from '../../services/api';
 
 export default function MandiPrices({ compact = false }) {
-  const { t } = useTranslation();
 
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,11 +29,14 @@ export default function MandiPrices({ compact = false }) {
         crop: item.crop,
         price: Number(item.price),
         unit: item.unit || '₹/quintal',
-        change: 0,
-        changePercent: 0,
+        change: item.change ?? null,
+        changePercent: item.changePercent ?? null,
+        market: item.market ?? null,
+        lastUpdated: item.lastUpdated ?? new Date().toLocaleDateString('en-IN')
       }));
 
       setPrices(formatted);
+
     } catch (err) {
       console.error('Mandi fetch error:', err);
       setError("Unable to fetch mandi prices. Please try again later.");
@@ -68,7 +69,7 @@ export default function MandiPrices({ compact = false }) {
 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
         <h2 className="text-3xl font-bold text-brand-green">
-          {t('mandiUpdate') || "Live Mandi Prices"}
+          Live Mandi Bhav
         </h2>
 
         {!compact && (
@@ -110,6 +111,8 @@ export default function MandiPrices({ compact = false }) {
               unit={item.unit}
               change={item.change}
               changePercent={item.changePercent}
+              market={item.market}
+              lastUpdated={item.lastUpdated}
             />
           ))
         ) : (

@@ -13,6 +13,10 @@ import DocumentsPage from "./pages/DocumentsPage";
 import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
+
+// ✅ New Page (Schemes + Sarkar Setu combined)
+import KrishiSetuPage from "./pages/KrishiSetuPage";
+
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 import Navbar from "./components/layout/Navbar";
@@ -28,13 +32,7 @@ function LayoutWrapper({ children }) {
     <>
       {!hideLayout && <Navbar />}
 
-      <div
-        className={
-          !hideLayout
-            ? "pt-[90px] pb-[110px] min-h-screen"
-            : "min-h-screen"
-        }
-      >
+      <div className={!hideLayout ? "pt-[90px] pb-[110px] min-h-screen" : "min-h-screen"}>
         <div className="mx-auto w-full max-w-6xl px-4 md:px-8">
           {children}
         </div>
@@ -48,20 +46,15 @@ function LayoutWrapper({ children }) {
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [isAuth, setIsAuth] = useState(
-    !!localStorage.getItem("isAuthenticated")
-  );
+  const [isAuth, setIsAuth] = useState(!!localStorage.getItem("isAuthenticated"));
 
   // Initial loader
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
-
+    const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // 🔥 Listen for auth updates
+  // Listen for auth updates (so UI updates after login/logout)
   useEffect(() => {
     const updateAuth = () => {
       setIsAuth(!!localStorage.getItem("isAuthenticated"));
@@ -71,30 +64,27 @@ export default function App() {
     return () => window.removeEventListener("auth-update", updateAuth);
   }, []);
 
-  if (loading) {
-    return <FullScreenLoader />;
-  }
+  if (loading) return <FullScreenLoader />;
 
   return (
     <Router>
       <LayoutWrapper>
         <Routes>
-
-          {/* Public Route */}
+          {/* Public */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected Routes */}
+          {/* Protected */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/mandi" element={<MandiPage />} />
             <Route path="/cases" element={<CasesPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/krishi-setu" element={<KrishiSetuPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
-
         </Routes>
       </LayoutWrapper>
     </Router>

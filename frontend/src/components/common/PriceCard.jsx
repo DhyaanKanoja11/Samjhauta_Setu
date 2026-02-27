@@ -1,19 +1,23 @@
 import PropTypes from 'prop-types';
-import { TrendingUp, TrendingDown, Minus, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
 import Card from './Card';
 
 export default function PriceCard({
   crop,
   price,
   unit = '₹/quintal',
-  change = 0,
-  changePercent = 0,
+  change = null,
+  changePercent = null,
+  market = null,
+  lastUpdated = null,
   onClick
 }) {
 
   const numericPrice = Number(price) || 0;
-  const isUp = change > 0;
-  const isDown = change < 0;
+
+  const hasTrend = change !== null && changePercent !== null;
+  const isUp = hasTrend && change > 0;
+  const isDown = hasTrend && change < 0;
 
   const getTrendColor = () => {
     if (isUp) return 'text-green-600 dark:text-green-400';
@@ -46,18 +50,18 @@ export default function PriceCard({
             </p>
           </div>
 
-          <div className={`p-3 rounded-2xl ${getBgColor()}`}>
-            {isUp ? (
-              <TrendingUp className={`w-5 h-5 ${getTrendColor()}`} />
-            ) : isDown ? (
-              <TrendingDown className={`w-5 h-5 ${getTrendColor()}`} />
-            ) : (
-              <Minus className={`w-5 h-5 ${getTrendColor()}`} />
-            )}
-          </div>
+          {hasTrend && (
+            <div className={`p-3 rounded-2xl ${getBgColor()}`}>
+              {isUp ? (
+                <TrendingUp className={`w-5 h-5 ${getTrendColor()}`} />
+              ) : (
+                <TrendingDown className={`w-5 h-5 ${getTrendColor()}`} />
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Price */}
+        {/* Price Section */}
         <div className="flex items-end justify-between">
           <div>
             <span className="text-3xl font-bold text-brand-green dark:text-brand-tan">
@@ -67,9 +71,18 @@ export default function PriceCard({
               /quintal
             </span>
 
-            {changePercent !== undefined && (
+            {/* Trend Display (only if real data exists) */}
+            {hasTrend && (
               <div className={`mt-2 text-xs font-semibold ${getTrendColor()}`}>
                 {isUp ? '+' : ''}{change} ({isUp ? '+' : ''}{changePercent}%)
+              </div>
+            )}
+
+            {/* Extra Details */}
+            {(market || lastUpdated) && (
+              <div className="mt-3 text-xs text-neutral-500 space-y-1">
+                {market && <div>Market: {market}</div>}
+                {lastUpdated && <div>Updated: {lastUpdated}</div>}
               </div>
             )}
           </div>
@@ -90,5 +103,7 @@ PriceCard.propTypes = {
   unit: PropTypes.string,
   change: PropTypes.number,
   changePercent: PropTypes.number,
+  market: PropTypes.string,
+  lastUpdated: PropTypes.string,
   onClick: PropTypes.func,
 };
