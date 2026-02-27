@@ -48,11 +48,11 @@ export default function DocumentScanner() {
                 setAnalysisResults(response.analysis);
                 setIsComplete(true);
             } else {
-                setError(response.error || "दस्तावेज़ स्कैन करने में विफल");
+                setError(response.error || t('scanFailed', 'Failed to scan document'));
             }
         } catch (err) {
             console.error("Scan error:", err);
-            setError("सर्वर से जुड़ने में समस्या हुई। कृपया पुनः प्रयास करें।");
+            setError(t('serverError', 'Error connecting to server. Please try again.'));
         } finally {
             setIsProcessing(false);
         }
@@ -92,10 +92,10 @@ export default function DocumentScanner() {
         <div className="space-y-6">
             <div>
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-display">
-                    {t('scannerTitle')}
+                    {t('scannerTitle', 'Document-Scanner')}
                 </h2>
                 <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                    {t('scannerSubtitle')}
+                    {t('scannerSubtitle', 'Scan and analyze your documents for legal risks')}
                 </p>
             </div>
 
@@ -114,7 +114,7 @@ export default function DocumentScanner() {
                 <Card className="h-full">
                     <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
                         <Upload className="w-5 h-5 text-brand-green" />
-                        {t('uploadTitle')}
+                        {t('uploadTitle', 'Upload Image')}
                     </h3>
 
                     {!preview ? (
@@ -136,13 +136,13 @@ export default function DocumentScanner() {
                                     <Upload className="w-8 h-8 text-neutral-400 group-hover:text-brand-green" />
                                 </div>
                                 <p className="text-neutral-700 dark:text-neutral-300 font-semibold mb-2">
-                                    {t('clickToUpload')}
+                                    {t('clickToUpload', 'Click to Upload')}
                                 </p>
                                 <p className="text-sm text-neutral-500">
-                                    {t('dragDrop')}
+                                    {t('dragDrop', 'or Drag & Drop')}
                                 </p>
                                 <p className="text-xs text-neutral-400 mt-4 px-4 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full inline-block">
-                                    JPG, PNG, PDF (Max 10MB)
+                                    {t('supportedFormats', 'JPG, PNG, PDF (Max 10MB)')}
                                 </p>
                             </label>
 
@@ -152,7 +152,7 @@ export default function DocumentScanner() {
                                 </div>
                                 <div className="relative flex justify-center text-sm">
                                     <span className="px-4 bg-white dark:bg-neutral-900 text-neutral-500 font-medium">
-                                        {t('or') || 'OR'}
+                                        {t('or', 'OR')}
                                     </span>
                                 </div>
                             </div>
@@ -161,9 +161,9 @@ export default function DocumentScanner() {
                                 variant="outline"
                                 className="w-full h-12"
                                 icon={<Camera className="w-5 h-5" />}
-                                onClick={() => alert(t('cameraSoon'))}
+                                onClick={() => alert(t('cameraSoon', 'Camera feature coming soon!'))}
                             >
-                                {t('takePhoto')}
+                                {t('takePhoto', 'Take Photo')}
                             </Button>
                         </div>
                     ) : (
@@ -196,7 +196,7 @@ export default function DocumentScanner() {
                                     disabled={isProcessing || isComplete}
                                     loading={isProcessing}
                                 >
-                                    {isComplete ? t('analysisComplete') : t('checkingRisk')}
+                                    {isComplete ? t('analysisComplete', 'Analysis Complete') : t('checkingRisk', 'Check Document')}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -204,7 +204,7 @@ export default function DocumentScanner() {
                                     onClick={handleReset}
                                     disabled={isProcessing}
                                 >
-                                    {t('reset')}
+                                    {t('reset', 'Reset')}
                                 </Button>
                             </div>
                         </div>
@@ -215,7 +215,7 @@ export default function DocumentScanner() {
                 <Card className="h-full flex flex-col">
                     <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
                         <ShieldAlert className="w-5 h-5 text-brand-blue" />
-                        जोखिम विश्लेषण परिणाम
+                        {t('riskAnalysisResult', 'Risk Analysis Result')}
                     </h3>
 
                     {isProcessing ? (
@@ -225,15 +225,15 @@ export default function DocumentScanner() {
                                 <ShieldAlert className="w-8 h-8 text-brand-green absolute inset-0 m-auto animate-pulse" />
                             </div>
                             <div className="text-center">
-                                <p className="font-bold text-neutral-800 text-lg">अनुबंध का विश्लेषण कर रहे हैं...</p>
-                                <p className="text-sm text-neutral-500">कृत्रिम बुद्धिमत्ता (AI) जोखिमों की पहचान कर रही है</p>
+                                <p className="font-bold text-neutral-800 text-lg">{t('analyzingContract', 'Analyzing the document...')}</p>
+                                <p className="text-sm text-neutral-500">{t('aiIdentifyingRisks', 'AI is identifying potential risks')}</p>
                             </div>
                         </div>
                     ) : !isComplete ? (
                         <div className="flex-1 flex flex-col items-center justify-center p-12 text-center text-neutral-400 bg-neutral-50/50 rounded-2xl border-2 border-dashed border-neutral-200">
                             <ShieldAlert className="w-16 h-16 mb-4 opacity-20" />
-                            <p className="font-medium text-lg">विश्लेषण शुरू करने के लिए दस्तावेज़ अपलोड करें</p>
-                            <p className="text-sm mt-2 max-w-[250px]">हमारा जोखिम इंजन आपके अनुबंध का विश्लेषण करेगा और संभावित खतरों की रिपोर्ट देगा</p>
+                            <p className="font-medium text-lg">{t('uploadToStart', 'Upload an image to start analysis')}</p>
+                            <p className="text-sm mt-2 max-w-[250px]">{t('riskEngineDesc', 'Our risk engine will analyze your document and report potential threats.')}</p>
                         </div>
                     ) : (
                         <div className="flex-1 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
@@ -243,8 +243,12 @@ export default function DocumentScanner() {
                                     {getRiskIcon(analysisResults?.risk_level)}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold uppercase tracking-wider opacity-80">जोखिम स्तर</p>
-                                    <h4 className="text-3xl font-black">{analysisResults?.risk_level === 'HIGH' ? 'उच्च' : analysisResults?.risk_level === 'MEDIUM' ? 'मध्यम' : 'न्यूनतम'}</h4>
+                                    <p className="text-sm font-bold uppercase tracking-wider opacity-80">{t('riskLevel', 'Risk Level')}</p>
+                                    <h4 className="text-3xl font-black">
+                                        {analysisResults?.risk_level === 'HIGH' ? t('high', 'High') : 
+                                         analysisResults?.risk_level === 'MEDIUM' ? t('medium', 'Medium') : 
+                                         t('low', 'Low')}
+                                    </h4>
                                     <div className="flex items-center gap-2 mt-1">
                                         <div className="w-32 h-2 bg-black/10 rounded-full overflow-hidden">
                                             <div
@@ -252,7 +256,7 @@ export default function DocumentScanner() {
                                                 style={{ width: `${Math.min(100, (analysisResults?.risk_score || 0) * 10)}%` }}
                                             />
                                         </div>
-                                        <span className="text-xs font-bold">स्कोर: {analysisResults?.risk_score}</span>
+                                        <span className="text-xs font-bold">{t('score', 'Score:')} {analysisResults?.risk_score}</span>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +266,7 @@ export default function DocumentScanner() {
                                 <div className="space-y-4">
                                     <h5 className="font-semibold text-neutral-800 text-lg flex items-center gap-2">
                                         <ShieldAlert className="w-5 h-5 text-error" />
-                                        संवेदनशील धाराएं (Risky Clauses)
+                                        {t('riskyClauses', 'Risky Clauses')}
                                     </h5>
                                     <div className="space-y-3">
                                         {analysisResults.risky_clauses.map((clause, index) => (
@@ -271,13 +275,13 @@ export default function DocumentScanner() {
                                                     <p className="text-sm font-medium text-neutral-800 line-clamp-3">
                                                         "{clause.clause_text}..."
                                                     </p>
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold bg-error text-white uppercase`}>
-                                                        स्कोर: {clause.clause_score}
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold bg-error text-white uppercase whitespace-nowrap`}>
+                                                        {t('score', 'Score:')} {clause.clause_score}
                                                     </span>
                                                 </div>
                                                 {clause.explanations && (
                                                     <div className="pt-2 border-t border-error/10">
-                                                        <p className="text-xs text-error font-semibold italic">समस्या: {clause.explanations}</p>
+                                                        <p className="text-xs text-error font-semibold italic">{t('issue', 'Issue:')} {clause.explanations}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -289,7 +293,7 @@ export default function DocumentScanner() {
                             {/* Key Findings */}
                             {analysisResults?.key_findings && analysisResults.key_findings.length > 0 && (
                                 <div className="space-y-3">
-                                    <h5 className="font-semibold text-neutral-800 text-lg">मुख्य निष्कर्ष</h5>
+                                    <h5 className="font-semibold text-neutral-800 text-lg">{t('keyFindings', 'Key Findings')}</h5>
                                     <ul className="space-y-2">
                                         {analysisResults.key_findings.map((finding, index) => (
                                             <li key={index} className="flex items-start gap-3 p-3 bg-neutral-50 rounded-lg border border-neutral-100">
@@ -304,7 +308,7 @@ export default function DocumentScanner() {
                             {/* Extracted Text Preview */}
                             {extractedText && (
                                 <div className="space-y-3">
-                                    <h5 className="font-semibold text-neutral-800 text-lg">निकाला गया टेक्स्ट (पूर्वावलोकन)</h5>
+                                    <h5 className="font-semibold text-neutral-800 text-lg">{t('extractedTextPreview', 'Extracted Text (Preview)')}</h5>
                                     <div className="bg-neutral-50 rounded-lg p-4 max-h-60 overflow-y-auto border border-neutral-100">
                                         <pre className="text-sm text-neutral-900 whitespace-pre-wrap font-hindi">
                                             {extractedText}
@@ -316,10 +320,10 @@ export default function DocumentScanner() {
                                             className="flex-1"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(extractedText);
-                                                alert('टेक्स्ट कॉपी किया गया!');
+                                                alert(t('textCopied', 'Text copied!'));
                                             }}
                                         >
-                                            टेक्स्ट कॉपी करें
+                                            {t('copyText', 'Copy Text')}
                                         </Button>
                                         <Button
                                             variant="outline"
@@ -332,7 +336,7 @@ export default function DocumentScanner() {
                                                 a.click();
                                             }}
                                         >
-                                            डाउनलोड करें
+                                            {t('download', 'Download')}
                                         </Button>
                                     </div>
                                 </div>
@@ -344,10 +348,10 @@ export default function DocumentScanner() {
 
             {/* Recent Scans */}
             <Card>
-                <h3 className="font-semibold text-lg mb-4">हाल के स्कैन</h3>
+                <h3 className="font-semibold text-lg mb-4">{t('recentScans', 'Recent Scans')}</h3>
                 <div className="text-center py-8 text-neutral-400">
                     <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>अभी तक कोई स्कैन नहीं</p>
+                    <p>{t('noScansYet', 'No scans yet')}</p>
                 </div>
             </Card>
         </div>
