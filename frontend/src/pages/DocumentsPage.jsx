@@ -1,45 +1,53 @@
 import { useTranslation } from 'react-i18next';
 import { FileText, Plus, Search, Folder, ShieldCheck, Download, Trash2, Eye } from 'lucide-react';
 import Card from '../components/common/Card';
-import Button from '../components/common/Button';
 import DocumentScanner from '../components/dashboard/DocumentScanner';
 import VoiceAssistant from '../components/dashboard/VoiceAssistant';
 
 export default function DocumentsPage() {
     const { t } = useTranslation();
 
+    // Added proper fallback text with spaces to fix casing errors
     const categories = [
-        { name: t('landRecords'), count: 12, icon: Folder, color: 'text-brand-green' },
-        { name: t('idProofs'), count: 4, icon: ShieldCheck, color: 'text-brand-brown' },
-        { name: t('contracts'), count: 8, icon: FileText, color: 'text-blue-500' },
-        { name: t('other'), count: 3, icon: Plus, color: 'text-neutral-400' },
+        { name: t('landRecords', 'Land Records'), count: 12, icon: Folder, color: 'text-brand-green' },
+        { name: t('idProofs', 'ID Proofs'), count: 4, icon: ShieldCheck, color: 'text-brand-brown' },
+        { name: t('contracts', 'Contracts'), count: 8, icon: FileText, color: 'text-blue-500' },
+        { name: t('other', 'Other'), count: 3, icon: Plus, color: 'text-neutral-400' },
     ];
 
     return (
         <div className="min-h-screen bg-brand-cream/10 dark:bg-[#0F110C] pb-24 md:pb-8 transition-colors duration-300">
             <div className="container-custom py-12 space-y-12">
-                {/* Header */}
+                
+                {/* Header Section */}
                 <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                     <div className="space-y-4">
                         <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-green/10 text-brand-green rounded-full text-[10px] font-black uppercase tracking-widest">
                             <ShieldCheck className="w-3 h-3" />
                             SECURE STORAGE
                         </div>
+                        
+                        {/* Fixed the missing spaces in the heading */}
                         <h1 className="text-5xl font-black text-brand-green dark:text-brand-tan tracking-tighter uppercase">
-                            {t('legalPaperChecker')}
+                            {t('legalPaperChecker', 'Legal Paper Checker')}
                         </h1>
+                        
                         <p className="text-neutral-500 font-medium max-w-xl">
-                            {t('docsSubtitle')}
+                            {t('docsSubtitle', 'Securely scan, analyze, and store your agricultural documents.')}
+                        </p>
+
+                        {/* Added the gray, italicized demo disclaimer */}
+                        <p className="text-neutral-400 italic text-sm max-w-xl">
+                            Some functions may not work, as this is just a demo. After the app is officially deployed, you can use those functions as you log in.
                         </p>
                     </div>
-                    <Button className="bg-brand-green rounded-2xl px-10 py-5 text-[10px] font-black uppercase tracking-widest shadow-2xl">
-                        <Plus className="w-5 h-5 mr-2" />
-                        {t('uploadDoc')}
-                    </Button>
+                    
+                    {/* The Green "Upload Doc" Button was removed from here */}
                 </header>
 
                 {/* Main Content Area */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    
                     {/* Sidebar: Categories */}
                     <div className="lg:col-span-4 space-y-8">
                         <div className="grid grid-cols-1 gap-4">
@@ -69,10 +77,10 @@ export default function DocumentsPage() {
 
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-2xl font-black text-brand-green dark:text-brand-tan uppercase tracking-tighter">{t('myFiles')}</h2>
+                                <h2 className="text-2xl font-black text-brand-green dark:text-brand-tan uppercase tracking-tighter">{t('myFiles', 'My Files')}</h2>
                                 <div className="text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-4">
-                                    <span className="cursor-pointer hover:text-brand-green">{t('shared')}</span>
-                                    <span className="cursor-pointer hover:text-brand-green">{t('trash')}</span>
+                                    <span className="cursor-pointer hover:text-brand-green">{t('shared', 'Shared')}</span>
+                                    <span className="cursor-pointer hover:text-brand-green">{t('trash', 'Trash')}</span>
                                 </div>
                             </div>
 
@@ -93,9 +101,9 @@ export default function DocumentsPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-2 hover:bg-brand-green/10 text-brand-green rounded-lg" title={t('view')}><Eye className="w-5 h-5" /></button>
-                                            <button className="p-2 hover:bg-brand-green/10 text-brand-green rounded-lg" title={t('download')}><Download className="w-5 h-5" /></button>
-                                            <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg" title={t('delete')}><Trash2 className="w-5 h-5" /></button>
+                                            <button className="p-2 hover:bg-brand-green/10 text-brand-green rounded-lg" title={t('view', 'View')}><Eye className="w-5 h-5" /></button>
+                                            <button className="p-2 hover:bg-brand-green/10 text-brand-green rounded-lg" title={t('download', 'Download')}><Download className="w-5 h-5" /></button>
+                                            <button className="p-2 hover:bg-red-50 text-red-500 rounded-lg" title={t('delete', 'Delete')}><Trash2 className="w-5 h-5" /></button>
                                         </div>
                                     </div>
                                 ))}
