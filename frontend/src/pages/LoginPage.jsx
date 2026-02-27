@@ -132,17 +132,26 @@ export default function LoginPage() {
                 <Card variant="glass" className="p-10 border-white/20 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]">
 
                     {/* Header */}
-                    <div className="flex flex-col items-center mb-10">
+                    <div className="flex flex-col items-center mb-6">
                         <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl mb-6">
                             <ShieldCheck className="w-12 h-12 text-brand-green" />
                         </div>
 
-                        <h1 className="text-4xl font-black text-brand-green dark:text-brand-tan tracking-tighter uppercase mb-2">
+                        {/* Heading color changed to text-white */}
+                        <h1 className="text-4xl font-black text-white dark:text-white tracking-tighter uppercase mb-2">
                             {t.appName}
                         </h1>
 
                         <p className="text-[10px] uppercase font-black tracking-[0.3em] text-neutral-400 dark:text-neutral-500">
                             {t.tagline}
+                        </p>
+                    </div>
+
+                    {/* Added Grey Demo Text */}
+                    <div className="mb-6 p-3 bg-black/10 rounded-xl border border-white/5 text-center">
+                        <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
+                            For demo purposes, use the following credentials- <br/>
+                            Phone no. : <span className="text-white tracking-widest font-bold">9998854433</span> &nbsp; OTP: <span className="text-white tracking-widest font-bold">543210</span>
                         </p>
                     </div>
 
