@@ -19,7 +19,9 @@ export default function Navbar() {
   );
 
   const [language, setLanguage] = useState(
-    localStorage.getItem("language") || "en"
+    localStorage.getItem("language") ||
+      localStorage.getItem("selectedLanguage") ||
+      "en"
   );
 
   const [fontSize, setFontSize] = useState(
@@ -43,23 +45,22 @@ export default function Navbar() {
     localStorage.setItem("fontSize", fontSize);
   }, [fontSize]);
 
-  // ✅ Google Translate: reliable apply (wait until widget is ready)
+  // ✅ Language + Google Translate apply
   useEffect(() => {
+    // ✅ Keep both keys in sync
     localStorage.setItem("language", language);
+    localStorage.setItem("selectedLanguage", language);
 
     const tryApply = () => {
       const select = document.querySelector(".goog-te-combo");
       if (!select) return false;
-
       select.value = language;
       select.dispatchEvent(new Event("change"));
       return true;
     };
 
-    // Try immediately
     if (tryApply()) return;
 
-    // Retry for ~4 seconds (widget loads async)
     let tries = 0;
     const interval = setInterval(() => {
       tries += 1;
@@ -113,25 +114,13 @@ export default function Navbar() {
 
           {/* Font Controls */}
           <div className="flex gap-2 text-sm">
-            <button
-              onClick={() => setFontSize("sm")}
-              className="hover:opacity-80"
-              type="button"
-            >
+            <button onClick={() => setFontSize("sm")} className="hover:opacity-80" type="button">
               A-
             </button>
-            <button
-              onClick={() => setFontSize("base")}
-              className="hover:opacity-80"
-              type="button"
-            >
+            <button onClick={() => setFontSize("base")} className="hover:opacity-80" type="button">
               A
             </button>
-            <button
-              onClick={() => setFontSize("lg")}
-              className="hover:opacity-80"
-              type="button"
-            >
+            <button onClick={() => setFontSize("lg")} className="hover:opacity-80" type="button">
               A+
             </button>
           </div>
