@@ -1,70 +1,64 @@
-import os
-import time
-from groq import Groq
-from gtts import gTTS
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional, Dict, Any
 
-groq_client = Groq(api_key="")
+# Internal Imports
+from services.chat import get_chat_response
+from services.news import get_pib_news
+from services.weather import get_weather
 
-def transcribe_audio(filepath):
-    with open(filepath, "rb") as f:
-        response = groq_client.audio.transcriptions.create(
-            model="whisper-large-v3-turbo",
-            file=f,
-        )
-    return response.text
+app = FastAPI(title="Samjhauta Setu - Agriculture ChatBot V2")
 
-def get_answer(question):
-    response = groq_client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[
-            {"role": "system", "content": "You are a helpful agriculture chatbot for Indian farmers."},
-            {"role": "user", "content": "Give a Brief Of Agriculture Seasons in India"},
-            {"role": "system", "content": "In India, the agricultural season consists of three major seasons: the Kharif (monsoon), the Rabi (winter), and the Zaid (summer)..."},
-            {"role": "user", "content": question}
-        ]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# In-memory context (Simplification for V2 demo)
+USER_CONTEXT = {}
+
+class ChatRequest(BaseModel):
+    text: str
+    lang: str = "hi"
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+
+@app.get("/")
+async def root():
+    return {"message": "Agriculture ChatBot V2 is running"}
+
+@app.post("/chat")
+async def chat(request: ChatRequest, req: Request):
+    user_id = req.client.host
+    if user_id not in USER_CONTEXT:
+        USER_CONTEXT[user_id] = {"state": None, "market": None}
+    
+    context = USER_CONTEXT[user_id]
+    response, status_code = get_chat_response(
+        request.text, request.lang, context, request.lat, request.lon
     )
-    return response.choices[0].message.content
+    
+    return JSONResponse(content={"text": response, "context": context}, status_code=status_code)
 
-def typing_effect(text, delay=0.03):
-    for char in text:
-        print(char, end='', flush=True)
-        time.sleep(delay)
-    print()  # Newline at end
+@app.get("/pib-news")
+async def pib_news(count: int = 10):
+    return get_pib_news(count)
 
-def text_to_speech(text, filename):
-    tts = gTTS(text)
-    output_path = f"{filename}.mp3"
-    tts.save(output_path)
-    return output_path
+@app.get("/weather")
+async def weather(lat: float, lon: float):
+    return {"text": get_weather(lat, lon)}
 
-def main():
-    mode = input("Choose input type ('text' or 'audio'): ").strip().lower()
-
-    if mode == 'text':
-        question = input("Enter your question: ").strip()
-
-    elif mode == 'audio':
-        filepath = input("Enter the path to your audio file: ").strip()
-        if not os.path.exists(filepath):
-            print("❌ File not found.")
-            return
-        print("🎤 Transcribing audio...")
-        question = transcribe_audio(filepath)
-        print(f"📝 Transcribed Text: {question}")
-
-    else:
-        print("❌ Invalid input type. Use 'text' or 'audio'.")
-        return
-
-    print("🤖 Getting response from LLM...")
-    answer = get_answer(question)
-
-    print("\n✅ Answer:")
-    typing_effect(answer) 
-
-    print("\n🔊 Converting answer to speech...")
-    audio_file = text_to_speech(answer, "response_audio")
-    print(f"🎧 Voice saved to: {audio_file}")
+@app.post("/reset")
+async def reset(req: Request):
+    user_id = req.client.host
+    USER_CONTEXT[user_id] = {"state": None, "market": None}
+    return {"message": "Context reset"}
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=5001)

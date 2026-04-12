@@ -43,7 +43,7 @@ function LayoutWrapper({ children }) {
           !hideLayout ? "pt-[90px] pb-[110px] min-h-screen" : "min-h-screen"
         }
       >
-        <div className="mx-auto w-full max-w-6xl px-4 md:px-8">{children}</div>
+        <div className="mx-auto w-full max-w-7xl">{children}</div>
       </div>
 
       {!hideLayout && <MobileBottomNav />}
